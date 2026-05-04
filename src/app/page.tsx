@@ -5,8 +5,8 @@ import { ethers } from 'ethers';
 import { createClient } from '@supabase/supabase-js';
 
 // Configuration
-const SUPABASE_URL = "https://lrekxibbwyeklpcgpyet.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxyZWt4aWJid3lla2xwY2dweWV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4Nzc2MzAsImV4cCI6MjA5MzQ1MzYzMH0.wAnAkfN0n0Un-1kZ4skASTjfFdHWniMOUqNcXKMWo5I";
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://lrekxibbwyeklpcgpyet.supabase.co";
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxyZWt4aWJid3lla2xwY2dweWV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4Nzc2MzAsImV4cCI6MjA5MzQ1MzYzMH0.wAnAkfN0n0Un-1kZ4skASTjfFdHWniMOUqNcXKMWo5I";
 const API_URL = "https://lrekxibbwyeklpcgpyet.supabase.co/functions/v1";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -47,9 +47,15 @@ export default function Home() {
         try {
             const r = await fetch(API_URL + '/api/live-wins?limit=20');
             const data = await r.json();
-            setLiveWins(data);
+            if (Array.isArray(data)) {
+                setLiveWins(data);
+            } else {
+                console.log('Live wins data is not an array:', data);
+                setLiveWins([]);
+            }
         } catch (e) {
             console.log('Live wins error:', e);
+            setLiveWins([]);
         }
     };
 
@@ -194,7 +200,7 @@ export default function Home() {
             {/* Live Ticker */}
             <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(10px)', borderTop: '1px solid #30363d', padding: '10px 0', overflow: 'hidden', zIndex: 999 }}>
                 <div style={{ display: 'flex', animation: 'tickerScroll 30s linear infinite', gap: '30px', whiteSpace: 'nowrap', paddingLeft: '100%' }}>
-                    {liveWins.length === 0 ? (
+                    {!Array.isArray(liveWins) || liveWins.length === 0 ? (
                         <span style={{ fontSize: '12px', fontWeight: 700 }}>🔴 LIVE Loading...</span>
                     ) : (
                         liveWins.map((w: any, i) => (
