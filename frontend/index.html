@@ -388,7 +388,8 @@
         // Live Wins Feed
         async function loadLiveWins() {
             try {
-                const r = await fetch('http://localhost:3001/api/live-wins?limit=20');
+                const baseUrl = (typeof API_URL !== 'undefined' ? API_URL : 'http://localhost:3001');
+                const r = await fetch(baseUrl + '/api/live-wins?limit=20');
                 const wins = await r.json();
                 const el = document.getElementById('tickerContent');
                 if (!wins || wins.length === 0) {

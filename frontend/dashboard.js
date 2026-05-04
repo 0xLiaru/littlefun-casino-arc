@@ -1,4 +1,4 @@
-const API = 'http://localhost:3001/api';
+const API = (typeof API_URL !== 'undefined' ? API_URL : 'http://localhost:3001') + '/api';
 let walletAddress = null;
 let ethPrice = 3500;
 let userData = null;

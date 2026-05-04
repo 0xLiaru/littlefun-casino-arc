@@ -750,7 +750,7 @@ async function endGame(reason) {
     try {
         const bjAddr = typeof BLACKJACK_ADDRESS !== 'undefined' ? BLACKJACK_ADDRESS : '';
         const totalWagered = originalBetETH + splitBetETH + ppBetETH + plus3BetETH;
-        await fetch('http://localhost:3001/api/blackjack/settle', {
+        await fetch(`${API_URL}/api/blackjack/settle`, {
             method: 'POST', headers: {'Content-Type':'application/json'},
             body: JSON.stringify({ 
                 playerAddress: walletAddress, 

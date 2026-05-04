@@ -205,8 +205,11 @@
                 const receipt = await tx.wait(); const iface = new ethers.Interface(ABI);
                 
                 let txTotalPayout = 0;
-                let ballResults = [];
                 
+                if (receipt.logs.length === 0) {
+                    alert("No contract events detected! Are you on the right network? Check if CONTRACT_ADDRESS is deployed on your current network.");
+                }
+
                 receipt.logs.forEach(l => {
                     const p = iface.parseLog(l);
                     if (p && p.name === "GameResult") {
@@ -234,7 +237,7 @@
                 const addr = walletAddress || localStorage.getItem('walletAddress');
                 const totalBetETH = parseFloat(amt) * count;
                 if (addr) {
-                    fetch('http://localhost:3001/api/user/transaction', {
+                    fetch(`${API_URL}/api/user/transaction`, {
                         method: 'POST', headers: {'Content-Type':'application/json'},
                         body: JSON.stringify({ address: addr, gameName: 'ARCIKO', totalBetETH, totalPayoutETH: txTotalPayout, ballCount: count, txHash: tx.hash, difficulty: currentDifficulty })
                     }).catch(e => console.log('TX save failed:', e));
@@ -259,13 +262,13 @@
             // SEND TO BACKEND API (database + XP)
             const addr = walletAddress || localStorage.getItem('walletAddress');
             if (addr) {
-                fetch('http://localhost:3001/api/eth-price').then(r=>r.json()).then(priceData => {
-                    fetch('http://localhost:3001/api/user/game-result', {
+                fetch(`${API_URL}/api/eth-price`).then(r=>r.json()).then(priceData => {
+                    fetch(`${API_URL}/api/user/game-result`, {
                         method: 'POST', headers: {'Content-Type':'application/json'},
                         body: JSON.stringify({ address: addr, gameName: 'ARCIKO', betETH: payout/mult, payoutETH: payout, multiplier: mult, ethPriceUSD: priceData.usd || 3500 })
                     }).catch(e => console.log('API save failed:', e));
                 }).catch(() => {
-                    fetch('http://localhost:3001/api/user/game-result', {
+                    fetch(`${API_URL}/api/user/game-result`, {
                         method: 'POST', headers: {'Content-Type':'application/json'},
                         body: JSON.stringify({ address: addr, gameName: 'ARCIKO', betETH: payout/mult, payoutETH: payout, multiplier: mult, ethPriceUSD: 3500 })
                     }).catch(e => console.log('API save failed:', e));
@@ -292,7 +295,7 @@
             document.getElementById('pfRevealedArea').style.display = 'none';
             
             try {
-                const r = await fetch('http://localhost:3001/api/provably-fair/seed', {
+                const r = await fetch(`${API_URL}/api/provably-fair/seed`, {
                     method: 'POST', headers: {'Content-Type':'application/json'},
                     body: JSON.stringify({ address: walletAddress })
                 });
@@ -310,7 +313,7 @@
         
         async function revealAndRotatePF() {
             try {
-                const r = await fetch('http://localhost:3001/api/provably-fair/reveal', {
+                const r = await fetch(`${API_URL}/api/provably-fair/reveal`, {
                     method: 'POST', headers: {'Content-Type':'application/json'},
                     body: JSON.stringify({ address: walletAddress })
                 });
