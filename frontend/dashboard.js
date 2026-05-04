@@ -2,6 +2,8 @@ const API = (typeof API_URL !== 'undefined' ? API_URL : 'http://localhost:3001')
 let walletAddress = null;
 let ethPrice = 3500;
 let userData = null;
+const { createClient } = supabase;
+const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 function switchTab(id, el) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -27,11 +29,26 @@ async function init() {
         try { const r2 = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd'); const d2 = await r2.json(); ethPrice = d2.ethereum.usd; } catch(e2) {}
     }
 
-    // Fetch/create user
+    // Fetch/create user directly from Supabase
     try {
-        const r = await fetch(API + '/user/' + walletAddress);
-        userData = await r.json();
-    } catch(e) { console.error('API error:', e); userData = null; }
+        const { data, error } = await _supabase.from('users').select('*').eq('address', walletAddress.toLowerCase()).single();
+        if (data) {
+            userData = {
+                ...data,
+                displayName: data.display_name,
+                totalWageredETH: parseFloat(data.total_wagered_eth || 0),
+                totalWonETH: parseFloat(data.total_won_eth || 0),
+                totalGames: data.total_games || 0,
+                twoFactorEnabled: data.two_factor_enabled,
+                dailyStreak: data.daily_streak || 0,
+                lastDailyClaim: data.last_daily_claim,
+                bonusBalanceETH: parseFloat(data.bonus_balance_eth || 0)
+            };
+        } else {
+            console.error('User not found in Supabase');
+            // If user not found, we could trigger creation via Function or just show empty
+        }
+    } catch(e) { console.error('Supabase error:', e); userData = null; }
 
     renderUI();
     updateBalance();
@@ -298,11 +315,28 @@ async function disable2FA() {
 
 async function loadLeaderboard() {
     try {
-        const r = await fetch(API + '/leaderboard?limit=20');
-        const data = await r.json();
-        const tbody = document.getElementById('leaderboardBody');
+        const { data, error } = await _supabase
+            .from('users')
+            .select('address, display_name, xp, tier, total_wagered_eth, total_won_eth, total_games')
+            .order('xp', { ascending: false })
+            .limit(20);
 
-        tbody.innerHTML = data.map(p => {
+        if (error) throw error;
+        
+        // Map to match the previous structure
+        const mappedData = data.map((u, i) => ({
+            rank: i + 1,
+            address: u.address,
+            displayName: u.display_name || ('Player_' + u.address.slice(2, 8)),
+            xp: u.xp,
+            tier: u.tier,
+            totalWagered: parseFloat(u.total_wagered_eth || 0),
+            totalWon: parseFloat(u.total_won_eth || 0),
+            totalGames: u.total_games || 0
+        }));
+
+        const tbody = document.getElementById('leaderboardBody');
+        tbody.innerHTML = mappedData.map(p => {
             const isMe = walletAddress && p.address.toLowerCase() === walletAddress.toLowerCase();
             const rowCls = isMe ? 'my-row' : '';
             let rankHTML;

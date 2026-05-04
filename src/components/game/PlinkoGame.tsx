@@ -4,6 +4,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ethers } from 'ethers';
 import * as Matter from 'matter-js';
 import { cn } from '@/lib/utils';
+import { CONTRACTS } from '@/lib/contracts';
+import { supabase } from '@/lib/supabase';
 
 // Contract Config (Dinamik olarak contract-config.js'den de okunabilir ama React içinde sabit tutmak daha güvenli)
 const ABI = [
@@ -124,8 +126,8 @@ export const PlinkoGame = () => {
         const signer = await provider.getSigner();
         setWalletAddress(accounts[0]);
         
-        // Bu adresi contract-config.js'den almaliyiz
-        const addr = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+        // Bu adresi contract-config.js'den veya src/lib/contracts.ts'den almaliyiz
+        const addr = CONTRACTS.PLINKO;
         const c = new ethers.Contract(addr, ABI, signer);
         setContract(c);
         updateBalance(provider, accounts[0]);
@@ -146,6 +148,10 @@ export const PlinkoGame = () => {
             const receipt = await tx.wait();
             const iface = new ethers.Interface(ABI);
             
+            if (receipt.logs.length === 0) {
+                alert("No game events detected! Please make sure you are on the correct network and the contract address is correct.");
+            }
+
             receipt.logs.forEach((l: any) => {
                 const p = iface.parseLog(l);
                 if (p && p.name === "GameResult") {
@@ -154,6 +160,17 @@ export const PlinkoGame = () => {
                     spawnBall(s, m, parseFloat(ethers.formatEther(p.args.amountOut)));
                 }
             });
+            // Record in Supabase
+            const addr = walletAddress || localStorage.getItem('walletAddress');
+            if (addr) {
+                supabase.from('transactions').insert([{
+                    user_address: addr.toLowerCase(),
+                    tx_type: 'ARCIKO',
+                    amount_eth: parseFloat(betAmount) * ballCount,
+                    tx_hash: tx.hash,
+                    status: 'completed'
+                }]).then(() => console.log('Recorded in Supabase'));
+            }
         } catch (e) { console.error(e); }
     };
 

@@ -28,6 +28,10 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
+// Serve frontend static files
+const frontendPath = path.join(__dirname2, '..', 'frontend');
+app.use(express.static(frontendPath));
+
 // ─── ETH PRICE (CoinGecko Proxy) ─────────────────────────
 let cachedPrice = null;
 let priceTimestamp = 0;
@@ -176,8 +180,11 @@ app.post('/api/blackjack/settle', async (req, res) => {
         const { playerAddress, betETH, payoutETH, playerWon, isBlackjack, contractAddress, sideBetDetails } = req.body;
         if (!playerAddress || !contractAddress) return res.status(400).json({ error: 'Missing fields' });
 
-        const provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545');
-        const wallet = new ethers.Wallet(HARDHAT_OWNER_KEY, provider);
+        const rpcUrl = process.env.RPC_URL || 'http://127.0.0.1:8545';
+        const privateKey = process.env.PRIVATE_KEY || HARDHAT_OWNER_KEY;
+        
+        const provider = new ethers.JsonRpcProvider(rpcUrl);
+        const wallet = new ethers.Wallet(privateKey, provider);
         const contract = new ethers.Contract(contractAddress, BLACKJACK_ABI, wallet);
 
         const payoutWei = ethers.parseEther(payoutETH.toString());
@@ -312,8 +319,11 @@ app.post('/api/daily-bonus/withdraw', async (req, res) => {
         if (result.error) return res.status(400).json(result);
         
         // Execute real transaction from system wallet
-        const systemProvider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
-        const systemSigner = new ethers.Wallet(process.env.HARDHAT_OWNER_KEY, systemProvider);
+        const rpcUrl = process.env.RPC_URL || 'http://127.0.0.1:8545';
+        const privateKey = process.env.PRIVATE_KEY || HARDHAT_OWNER_KEY;
+
+        const systemProvider = new ethers.JsonRpcProvider(rpcUrl);
+        const systemSigner = new ethers.Wallet(privateKey, systemProvider);
         
         const tx = await systemSigner.sendTransaction({
             to: address,

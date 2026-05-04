@@ -6,6 +6,7 @@
     <title>LITTLEFUN | Premium Web3 Gaming</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --bg: #0d1117; --text: #ffffff; --text-muted: #8b949e; --border: #30363d; --primary: #2081e2; --hover: #1c2128; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
@@ -340,6 +341,9 @@
 
     <script>
         let walletAddress = null;
+        const { createClient } = supabase;
+        const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         function openLogin() { document.getElementById('modalOverlay').style.display = 'flex'; }
         function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; }
         function toggleDropdown() { const d = document.getElementById('userDropdown'); d.style.display = d.style.display === 'flex' ? 'none' : 'flex'; }
@@ -357,7 +361,6 @@
                 localStorage.setItem('isLoggedIn', 'true');
                 localStorage.setItem('walletAddress', walletAddress);
                 updateUI(); closeModal();
-                }
             } catch (e) { console.error(e); }
 
             if (eth) {
