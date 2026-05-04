@@ -74,14 +74,14 @@
     <div class="game-list">
         <div class="game-card-horizontal" style="display: grid; grid-template-columns: 350px 1fr; align-items: stretch; background: #16181d; border-radius: 20px; overflow: hidden; height: auto; padding: 0;">
             <!-- Left: Interactive Photo Upload Zone -->
-            <div id="arciko-image-container" style="background: #0a0b0e; display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 1px solid var(--border); position: relative; padding: 20px; text-align: center; overflow: hidden;">
+            <div id="arciko-image-container" style="background: #0a0b0e; display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 1px solid var(--border); position: relative; padding: 20px; text-align: center; overflow: hidden;" onclick="document.getElementById('arciko-file-input').click()">
                 <!-- Blurred background to fill empty space -->
                 <div id="arciko-blur-bg" style="position: absolute; inset: -20px; background-size: cover; background-position: center; filter: blur(20px); opacity: 0.5; z-index: 1;"></div>
                 <input type="file" id="arciko-file-input" accept="image/*" style="display: none;">
-                <img id="arcikoImg" src="arciko.png" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 10;" onerror="this.style.display='none'; document.getElementById('upload-prompt').style.display='block'; document.getElementById('arciko-blur-bg').style.display='none';">
+                <img id="arcikoImg" src="arciko.png" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 10;">
                 
-                <!-- Upload Prompt (Visible if image fails) -->
-                <div id="upload-prompt" style="display: none; z-index: 5;">
+                <!-- Upload Prompt (Visible only if specifically needed) -->
+                <div id="upload-prompt" style="display: none; z-index: 5; pointer-events: none;">
                     <div style="font-size: 30px; margin-bottom: 10px;">📸</div>
                     <div style="color: var(--primary); font-weight: 800; font-size: 14px;">CLICK TO ADD YOUR PHOTO</div>
                     <div style="color: var(--text-muted); font-size: 11px; margin-top: 5px;">(Saved automatically)</div>
@@ -116,18 +116,29 @@
             // Handle automatic image loading from browser memory
             const arcikoImg = document.getElementById('arcikoImg');
             const blurBg = document.getElementById('arciko-blur-bg');
+            const uploadPrompt = document.getElementById('upload-prompt');
             const savedImage = localStorage.getItem('arciko_custom_logo');
-            if (savedImage) {
-                arcikoImg.src = savedImage;
+            
+            function updateArcikoUI(src) {
+                arcikoImg.src = src;
                 arcikoImg.style.display = 'block';
-                blurBg.style.backgroundImage = `url(${savedImage})`;
+                blurBg.style.backgroundImage = `url(${src})`;
                 blurBg.style.display = 'block';
-                document.getElementById('upload-prompt').style.display = 'none';
-            } else {
-                // Set default blur if no custom image
-                blurBg.style.backgroundImage = `url('arciko.png')`;
-                blurBg.style.display = 'block';
+                uploadPrompt.style.display = 'none';
             }
+
+            if (savedImage) {
+                updateArcikoUI(savedImage);
+            } else {
+                updateArcikoUI('arciko.png');
+            }
+
+            // If the default image fails, show the upload prompt
+            arcikoImg.onerror = function() {
+                this.style.display = 'none';
+                blurBg.style.display = 'none';
+                uploadPrompt.style.display = 'block';
+            };
 
             // Upload logic is still here but click triggers are disabled
             const container = document.getElementById('arciko-image-container');
@@ -189,14 +200,14 @@
         </script>
         <div class="game-card-horizontal" style="display: grid; grid-template-columns: 350px 1fr; align-items: stretch; background: #16181d; border-radius: 20px; overflow: hidden; height: auto; padding: 0; margin-top: 20px;">
             <!-- Left: Interactive Photo Upload Zone -->
-            <div id="blackjack-image-container" style="background: #0a0b0e; display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 1px solid var(--border); position: relative; padding: 20px; text-align: center; overflow: hidden;">
+            <div id="blackjack-image-container" style="background: #0a0b0e; display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 1px solid var(--border); position: relative; padding: 20px; text-align: center; overflow: hidden;" onclick="document.getElementById('blackjack-file-input').click()">
                 <!-- Blurred background to fill empty space -->
                 <div id="blackjack-blur-bg" style="position: absolute; inset: -20px; background-size: cover; background-position: center; filter: blur(20px); opacity: 0.5; z-index: 1;"></div>
                 <input type="file" id="blackjack-file-input" accept="image/*" style="display: none;">
-                <img id="blackjackImg" src="blackjack.png" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 10;" onerror="this.style.display='none'; document.getElementById('blackjack-upload-prompt').style.display='block'; document.getElementById('blackjack-blur-bg').style.display='none';">
+                <img id="blackjackImg" src="blackjack.png" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 10;">
                 
-                <!-- Upload Prompt (Visible if image fails) -->
-                <div id="blackjack-upload-prompt" style="display: none; z-index: 5;">
+                <!-- Upload Prompt (Visible only if specifically needed) -->
+                <div id="blackjack-upload-prompt" style="display: none; z-index: 5; pointer-events: none;">
                     <div style="font-size: 30px; margin-bottom: 10px;">📸</div>
                     <div style="color: var(--primary); font-weight: 800; font-size: 14px;">CLICK TO ADD YOUR PHOTO</div>
                     <div style="color: var(--text-muted); font-size: 11px; margin-top: 5px;">(Saved automatically)</div>
@@ -228,23 +239,32 @@
         </div>
 
         <script>
-            // BLACKJACK IMAGE UPLOAD LOGIC
+            // BLACKJACK IMAGE LOADING LOGIC
             const blackjackImg = document.getElementById('blackjackImg');
             const blackjackBlurBg = document.getElementById('blackjack-blur-bg');
+            const blackjackUploadPrompt = document.getElementById('blackjack-upload-prompt');
             const savedBlackjackImage = localStorage.getItem('blackjack_custom_logo');
-            if (savedBlackjackImage) {
-                blackjackImg.src = savedBlackjackImage;
+            
+            function updateBlackjackUI(src) {
+                blackjackImg.src = src;
                 blackjackImg.style.display = 'block';
-                blackjackBlurBg.style.backgroundImage = `url(${savedBlackjackImage})`;
+                blackjackBlurBg.style.backgroundImage = `url(${src})`;
                 blackjackBlurBg.style.display = 'block';
-                document.getElementById('blackjack-upload-prompt').style.display = 'none';
-            } else {
-                // Set default blur if no custom image
-                blackjackBlurBg.style.backgroundImage = `url('blackjack.png')`;
-                blackjackBlurBg.style.display = 'block';
+                blackjackUploadPrompt.style.display = 'none';
             }
 
-            const blackjackContainer = document.getElementById('blackjack-image-container');
+            if (savedBlackjackImage) {
+                updateBlackjackUI(savedBlackjackImage);
+            } else {
+                updateBlackjackUI('blackjack.png');
+            }
+
+            blackjackImg.onerror = function() {
+                this.style.display = 'none';
+                blackjackBlurBg.style.display = 'none';
+                blackjackUploadPrompt.style.display = 'block';
+            };
+
             const blackjackFileInput = document.getElementById('blackjack-file-input');
 
             blackjackFileInput.addEventListener('change', function() {
@@ -355,7 +375,11 @@
             }
         }
 
-        function logout() { localStorage.clear(); window.location.reload(); }
+        function logout() { 
+            localStorage.removeItem('isLoggedIn'); 
+            localStorage.removeItem('walletAddress');
+            window.location.reload(); 
+        }
         async function enterGame(url) {
             if (localStorage.getItem('isLoggedIn') === 'true') window.location.href = url;
             else { alert("Connect wallet first!"); openLogin(); }
