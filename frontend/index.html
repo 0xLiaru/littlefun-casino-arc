@@ -78,7 +78,7 @@
                 <!-- Blurred background to fill empty space -->
                 <div id="arciko-blur-bg" style="position: absolute; inset: -20px; background-size: cover; background-position: center; filter: blur(20px); opacity: 0.5; z-index: 1;"></div>
                 <input type="file" id="arciko-file-input" accept="image/*" style="display: none;">
-                <img id="arcikoImg" src="arciko_cover.png" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 10;" onerror="this.style.display='none'; document.getElementById('upload-prompt').style.display='block'; document.getElementById('arciko-blur-bg').style.display='none';">
+                <img id="arcikoImg" src="arciko.png" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 10;" onerror="this.style.display='none'; document.getElementById('upload-prompt').style.display='block'; document.getElementById('arciko-blur-bg').style.display='none';">
                 
                 <!-- Upload Prompt (Visible if image fails) -->
                 <div id="upload-prompt" style="display: none; z-index: 5;">
@@ -123,6 +123,10 @@
                 blurBg.style.backgroundImage = `url(${savedImage})`;
                 blurBg.style.display = 'block';
                 document.getElementById('upload-prompt').style.display = 'none';
+            } else {
+                // Set default blur if no custom image
+                blurBg.style.backgroundImage = `url('arciko.png')`;
+                blurBg.style.display = 'block';
             }
 
             // Upload logic is still here but click triggers are disabled
@@ -189,7 +193,7 @@
                 <!-- Blurred background to fill empty space -->
                 <div id="blackjack-blur-bg" style="position: absolute; inset: -20px; background-size: cover; background-position: center; filter: blur(20px); opacity: 0.5; z-index: 1;"></div>
                 <input type="file" id="blackjack-file-input" accept="image/*" style="display: none;">
-                <img id="blackjackImg" src="blackjack_cover.png" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 10;" onerror="this.style.display='none'; document.getElementById('blackjack-upload-prompt').style.display='block'; document.getElementById('blackjack-blur-bg').style.display='none';">
+                <img id="blackjackImg" src="blackjack.png" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 10;" onerror="this.style.display='none'; document.getElementById('blackjack-upload-prompt').style.display='block'; document.getElementById('blackjack-blur-bg').style.display='none';">
                 
                 <!-- Upload Prompt (Visible if image fails) -->
                 <div id="blackjack-upload-prompt" style="display: none; z-index: 5;">
@@ -234,6 +238,10 @@
                 blackjackBlurBg.style.backgroundImage = `url(${savedBlackjackImage})`;
                 blackjackBlurBg.style.display = 'block';
                 document.getElementById('blackjack-upload-prompt').style.display = 'none';
+            } else {
+                // Set default blur if no custom image
+                blackjackBlurBg.style.backgroundImage = `url('blackjack.png')`;
+                blackjackBlurBg.style.display = 'block';
             }
 
             const blackjackContainer = document.getElementById('blackjack-image-container');
