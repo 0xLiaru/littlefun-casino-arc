@@ -33,12 +33,12 @@ export async function sendVerificationEmail(toEmail, code) {
     if (!transporter) {
         console.log('');
         console.log('══════════════════════════════════════════════════');
-        console.log(`📧 EMAIL DOĞRULAMA KODU (Dev Mode)`);
+        console.log(`📧 EMAIL VERIFICATION CODE (Dev Mode)`);
         console.log(`   Email: ${toEmail}`);
-        console.log(`   Kod  : ${code}`);
+        console.log(`   Code : ${code}`);
         console.log('══════════════════════════════════════════════════');
         console.log('');
-        console.log('💡 Gerçek email göndermek için .env dosyasına Gmail bilgilerinizi ekleyin.');
+        console.log('💡 To send real emails, add your Gmail credentials to the .env file.');
         console.log('');
         return { success: true, devMode: true };
     }
@@ -66,13 +66,13 @@ export async function sendVerificationEmail(toEmail, code) {
                 <h1>LITTLEFUN</h1>
             </div>
             <div class="content">
-                <h2 style="margin: 0 0 10px; font-weight: 800;">Email Doğrulama</h2>
-                <p class="info">Hesabınızı doğrulamak için aşağıdaki kodu kullanın:</p>
+                <h2 style="margin: 0 0 10px; font-weight: 800;">Email Verification</h2>
+                <p class="info">Use the code below to verify your account:</p>
                 <div class="code-box">${code}</div>
-                <p class="info">Bu kod <strong>5 dakika</strong> içinde geçerliliğini yitirecektir.<br>Bu kodu kimseyle paylaşmayın.</p>
+                <p class="info">This code will expire in <strong>5 minutes</strong>.<br>Do not share this code with anyone.</p>
             </div>
             <div class="footer">
-                <p>Bu emaili siz talep etmediyseniz, lütfen görmezden gelin.</p>
+                <p>If you did not request this email, please ignore it.</p>
                 <p style="margin-top: 5px;">© 2026 LITTLEFUN — Premium Web3 Gaming</p>
             </div>
         </div>
@@ -83,14 +83,14 @@ export async function sendVerificationEmail(toEmail, code) {
         await transporter.sendMail({
             from: `"LITTLEFUN" <${process.env.EMAIL_USER}>`,
             to: toEmail,
-            subject: '🔐 LITTLEFUN — Email Doğrulama Kodunuz',
+            subject: '🔐 LITTLEFUN — Your Email Verification Code',
             html: htmlContent
         });
-        console.log(`✅ Doğrulama kodu gönderildi: ${toEmail}`);
+        console.log(`✅ Verification code sent: ${toEmail}`);
         return { success: true };
     } catch (error) {
-        console.error('❌ Email gönderilemedi:', error.message);
-        console.log(`📧 Kod: ${code} (${toEmail})`);
+        console.error('❌ Email could not be sent:', error.message);
+        console.log(`📧 Code: ${code} (${toEmail})`);
         return { success: false, error: error.message, devMode: true, code };
     }
 }

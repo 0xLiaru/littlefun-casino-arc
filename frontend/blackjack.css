@@ -17,7 +17,7 @@ input{width:100%;background:#0a0b0e;border:1px solid var(--border);border-radius
 .stat-item{background:rgba(255,255,255,.02);padding:12px;border-radius:12px;text-align:center}
 .stat-item>div:last-child{font-size:18px;font-weight:900;margin-top:4px}
 /* TABLE */
-.table{background:radial-gradient(circle at 50% 40%, #2d6a4f 0%, #1b4332 70%, #081c15 100%);border:10px solid #2a2d34;border-radius:40px;padding:50px 40px 30px;min-height:550px;display:flex;flex-direction:column;justify-content:space-between;align-items:center;position:relative;box-shadow:inset 0 0 120px rgba(0,0,0,0.7), 0 20px 60px rgba(0,0,0,0.8);margin-bottom:20px;overflow:hidden}
+.table{background:radial-gradient(circle at 50% 40%, #2d6a4f 0%, #1b4332 70%, #081c15 100%);border:10px solid #2a2d34;border-radius:40px;padding:40px;min-height:750px;display:flex;flex-direction:column;justify-content:space-between;align-items:center;position:relative;box-shadow:inset 0 0 120px rgba(0,0,0,0.7), 0 20px 60px rgba(0,0,0,0.8);margin-bottom:20px;overflow:hidden}
 .table::after {
     content: ''; position: absolute; inset: 0; 
     background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
@@ -38,7 +38,8 @@ input{width:100%;background:#0a0b0e;border:1px solid var(--border);border-radius
     background: #222; border-radius: 4px 4px 0 0; border-bottom: 1px solid #000;
 }
 
-.dealer-section,.player-section{width:100%;text-align:center;z-index: 2;}
+.dealer-section { width:100%; text-align:center; z-index: 2; margin-bottom: 20px; }
+.player-section { width:100%; text-align:center; z-index: 2; margin-bottom: 40px; }
 .hand-label{font-size:13px;font-weight:900;letter-spacing:4px;color:rgba(255,255,255,0.3);margin-bottom:20px;text-transform:uppercase;text-shadow: 0 2px 4px rgba(0,0,0,0.3)}
 .score-badge{background:rgba(0,0,0,0.7);padding:6px 16px;border-radius:10px;font-size:16px;font-weight:900;color:#fff;margin-left:10px;border:1px solid rgba(255,255,255,0.1);box-shadow: 0 4px 10px rgba(0,0,0,0.3)}
 .hand{display:flex;justify-content:center;min-height:160px;align-items:center;flex-wrap:wrap;perspective:1000px}
@@ -158,3 +159,113 @@ input{width:100%;background:#0a0b0e;border:1px solid var(--border);border-radius
 .history-tbl th{text-align:left;padding:8px;color:var(--muted);border-bottom:1px solid var(--border)}
 .history-tbl td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,.02);font-weight:600}
 
+/* CHIP UI */
+.chip-rack {
+    display: flex; justify-content: center; gap: 8px; margin-bottom: 15px;
+    padding-bottom: 15px; border-bottom: 1px solid var(--border);
+}
+.chip {
+    width: 45px; height: 45px; border-radius: 50%;
+    border: 2px dashed rgba(255,255,255,0.2); font-size: 11px; font-weight: 800;
+    color: white; cursor: pointer; transition: all 0.2s; display: flex;
+    align-items: center; justify-content: center;
+    background: radial-gradient(circle at 30% 30%, #3a3f4a, #16181d);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.1);
+    position: relative;
+}
+.chip::after { content: ''; position: absolute; inset: 4px; border-radius: 50%; border: 1px dotted rgba(255,255,255,0.1); }
+.chip:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.4); }
+.chip.active {
+    border: 2px solid var(--green); transform: translateY(-5px);
+    box-shadow: 0 0 15px rgba(16,185,129,0.5), inset 0 0 10px rgba(16,185,129,0.2);
+}
+.chip[data-val="0.001"] { border-color: #94a3b8; }
+.chip[data-val="0.01"] { border-color: #3b82f6; }
+.chip[data-val="0.1"] { border-color: #ec4899; }
+.chip[data-val="1"] { border-color: #eab308; }
+.chip[data-val="custom"] { border-color: #10b981; }
+
+.chip.active[data-val="0.001"] { border-color:#94a3b8; box-shadow: 0 0 15px #94a3b8; }
+.chip.active[data-val="0.01"] { border-color:#3b82f6; box-shadow: 0 0 15px #3b82f6; }
+.chip.active[data-val="0.1"] { border-color:#ec4899; box-shadow: 0 0 15px #ec4899; }
+.chip.active[data-val="1"] { border-color:#eab308; box-shadow: 0 0 15px #eab308; }
+.chip.active[data-val="custom"] { border-color:#10b981; box-shadow: 0 0 15px #10b981; }
+
+.input-group { display: flex; align-items: stretch; margin-bottom: 15px; transition: 0.3s; border: 1px solid transparent; border-radius: 12px; }
+.input-group.drag-over { border-color: var(--green); box-shadow: 0 0 15px rgba(16,185,129,0.3); transform: scale(1.02); }
+.input-group input { margin-bottom: 0; border-radius: 12px 0 0 12px; }
+.add-btn {
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    color: white; width: 40px; border-radius: 0 12px 12px 0;
+    cursor: pointer; font-weight: 800; transition: 0.2s; margin-left: -2px;
+}
+.add-btn:hover { background: rgba(255,255,255,0.1); }
+.add-btn:active { background: var(--green); color: black; }
+
+/* TABLE BETTING SPOTS */
+.betting-table-spots {
+    display: flex;
+    gap: 70px;
+    align-items: center;
+    z-index: 5;
+    pointer-events: all;
+    margin: 20px 0;
+}
+.bet-spot {
+    width: 90px;
+    height: 90px;
+    border: 3px dashed rgba(255,255,255,0.1);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: rgba(0,0,0,0.05);
+}
+.bet-spot:hover, .bet-spot.drag-over {
+    border-color: var(--green);
+    background: rgba(16,185,129,0.08);
+    transform: scale(1.1);
+}
+.spot-label {
+    font-size: 10px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.15);
+    pointer-events: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: absolute;
+    bottom: -20px;
+    width: 100px;
+    text-align: center;
+}
+.table-chips {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+.table-chip {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    border: 3px dashed rgba(255,255,255,0.3);
+    background: radial-gradient(circle at 30% 30%, #444, #111);
+    position: absolute;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 900;
+    color: white;
+}
+.table-chip::before {
+    content: ''; position: absolute; inset: 4px; border: 1px dotted rgba(255,255,255,0.2); border-radius: 50%;
+}

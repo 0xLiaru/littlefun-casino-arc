@@ -27,7 +27,8 @@
     "nodemailer": "^6.9.8",
     "dotenv": "^16.3.1",
     "speakeasy": "^2.0.0",
-    "qrcode": "^1.5.3"
+    "qrcode": "^1.5.3",
+    "@supabase/supabase-js": "^2.43.1"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "^3.0.0",

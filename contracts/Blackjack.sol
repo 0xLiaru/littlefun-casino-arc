@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 contract Blackjack {
     address public owner;
-    uint256 public constant MIN_BET = 0.01 ether;
+    uint256 public constant MIN_BET = 0.001 ether;
 
     struct ActiveBet {
         uint256 amount;

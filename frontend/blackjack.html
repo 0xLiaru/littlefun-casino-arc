@@ -20,9 +20,46 @@
     <main>
         <div class="sidebar-panel">
             <div class="glass-card">
-                <label class="label">Bet Amount (ETH)</label>
-                <input type="number" id="betAmount" value="0.1" step="0.01" min="0.01">
-                <button id="dealBtn" class="deal-btn" onclick="startGame()" disabled>LOGIN REQUIRED</button>
+                <div class="chip-rack">
+                    <button class="chip active" draggable="true" ondragstart="dragChip(event, 0.001)" data-val="0.001" onclick="selectChip(0.001)">0.001</button>
+                    <button class="chip" draggable="true" ondragstart="dragChip(event, 0.01)" data-val="0.01" onclick="selectChip(0.01)">0.01</button>
+                    <button class="chip" draggable="true" ondragstart="dragChip(event, 0.1)" data-val="0.1" onclick="selectChip(0.1)">0.1</button>
+                    <button class="chip" draggable="true" ondragstart="dragChip(event, 1)" data-val="1" onclick="selectChip(1)">1</button>
+                    <button class="chip" id="customChip" draggable="true" ondragstart="dragChip(event, 'custom')" data-val="custom" onclick="selectChip('custom')">CUST</button>
+                </div>
+                <div id="customChipBox" style="display:none; margin-bottom:15px;">
+                    <label class="label" style="font-size:10px;">Custom Chip Value (ETH)</label>
+                    <input type="number" id="customChipVal" value="0.05" step="0.001" min="0.001" onchange="updateCustomChip(this.value)">
+                </div>
+
+                <label class="label" style="display:flex; justify-content:space-between">
+                    Main Bet (ETH) 
+                    <span style="color:var(--green); cursor:pointer; text-decoration:underline" onclick="clearBets()">CLEAR</span>
+                </label>
+                <div class="input-group" ondragover="allowDrop(event)" ondragenter="this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="dropChip(event, 'betAmount'); this.classList.remove('drag-over')">
+                    <input type="number" id="betAmount" value="0.001" step="0.001" min="0.001" style="transition: 0.2s;" oninput="updateTableChips(this.id)">
+                    <button class="add-btn" onclick="addChipToBet('betAmount')">+</button>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <div style="flex: 1;">
+                        <label class="label" style="font-size:10px;">Perfect Pairs</label>
+                        <div class="input-group" ondragover="allowDrop(event)" ondragenter="this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="dropChip(event, 'ppBetAmount'); this.classList.remove('drag-over')" onclick="addChipToBet('ppBetAmount')">
+                            <input type="number" id="ppBetAmount" value="0" step="0.001" min="0" style="padding:10px; font-size:14px; background: rgba(0,0,0,0.3); transition: 0.2s;" oninput="updateTableChips(this.id)">
+                            <button class="add-btn" style="height:44px" onclick="addChipToBet('ppBetAmount')">+</button>
+                        </div>
+                    </div>
+                    <div style="flex: 1;">
+                        <label class="label" style="font-size:10px;">21+3</label>
+                        <div class="input-group" ondragover="allowDrop(event)" ondragenter="this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="dropChip(event, 'plus3BetAmount'); this.classList.remove('drag-over')" onclick="addChipToBet('plus3BetAmount')">
+                            <input type="number" id="plus3BetAmount" value="0" step="0.001" min="0" style="padding:10px; font-size:14px; background: rgba(0,0,0,0.3); transition: 0.2s;" oninput="updateTableChips(this.id)">
+                            <button class="add-btn" style="height:44px" onclick="addChipToBet('plus3BetAmount')">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="dealBtn" class="deal-btn" onclick="startGame()" disabled style="margin-top:10px;">LOGIN REQUIRED</button>
+                <button class="action-btn" onclick="openPFModal()" style="width:100%; margin-top:10px; background:rgba(99,102,241,0.1); border:1px solid #6366f1; color:#6366f1; font-weight:800; border-radius:12px; font-size:12px; padding:10px;">🎲 PROVABLY FAIR</button>
             </div>
             <div class="glass-card">
                 <label class="label">Session Stats</label>
@@ -42,11 +79,35 @@
                     <div id="dealerHand" class="hand"></div>
                 </div>
                 <div id="gameMessage" class="game-message"></div>
-                <div class="player-section">
-                    <div class="hand-label">YOU <span id="playerScore" class="score-badge"></span></div>
-                    <div id="playerHand" class="hand"></div>
+                <div class="player-section" id="playerSection">
+                    <div id="handLabels" style="display: flex; justify-content: center; gap: 40px; margin-bottom: 10px;">
+                        <div class="hand-label" id="labelHand1">YOU <span id="playerScore" class="score-badge"></span></div>
+                        <div class="hand-label" id="labelHand2" style="display:none; color: #a8b2c1;">HAND 2 <span id="splitScore" class="score-badge" style="background:#30363d;"></span></div>
+                    </div>
+                    <div id="playerHandsContainer" style="display: flex; justify-content: center; gap: 40px;">
+                        <div id="playerHand" class="hand"></div>
+                        <div id="splitHand" class="hand" style="display:none;"></div>
+                    </div>
                 </div>
+
+                <!-- TABLE BETTING SPOTS -->
+                <div class="betting-table-spots" id="bettingTableSpots">
+                    <div class="bet-spot" id="spot-pp" ondragover="allowDrop(event)" ondragenter="this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="dropChip(event, 'ppBetAmount'); this.classList.remove('drag-over')" onclick="addChipToBet('ppBetAmount')">
+                        <div id="table-chips-pp" class="table-chips"></div>
+                        <div class="spot-label">Perfect Pairs</div>
+                    </div>
+                    <div class="bet-spot" id="spot-main" ondragover="allowDrop(event)" ondragenter="this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="dropChip(event, 'betAmount'); this.classList.remove('drag-over')" onclick="addChipToBet('betAmount')">
+                        <div id="table-chips-main" class="table-chips"></div>
+                        <div class="spot-label">Main Bet</div>
+                    </div>
+                    <div class="bet-spot" id="spot-plus3" ondragover="allowDrop(event)" ondragenter="this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="dropChip(event, 'plus3BetAmount'); this.classList.remove('drag-over')" onclick="addChipToBet('plus3BetAmount')">
+                        <div id="table-chips-plus3" class="table-chips"></div>
+                        <div class="spot-label">21 + 3</div>
+                    </div>
+                </div>
+
                 <div id="actionBtns" class="action-buttons" style="display:none">
+                    <button class="action-btn split" id="splitBtn" onclick="playerSplit()" style="display:none; background: #8b5cf6;">SPLIT</button>
                     <button class="action-btn hit" onclick="playerHit()">HIT</button>
                     <button class="action-btn stand" onclick="playerStand()">STAND</button>
                     <button class="action-btn double" id="doubleBtn" onclick="playerDouble()">DOUBLE</button>
@@ -68,5 +129,77 @@
         </div>
     </main>
     <script src="blackjack.js"></script>
+    <!-- PROVABLY FAIR MODAL -->
+    <div id="pfModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:2000; align-items:center; justify-content:center; padding:20px;">
+        <div class="glass-card" style="width:100%; max-width:500px; margin-bottom:0; background:#16181d; border:1px solid rgba(255,255,255,0.1); border-radius:20px; padding:20px; color:white;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h3 style="margin:0;">🎲 Provably Fair</h3>
+                <button onclick="closePFModal()" style="background:none; border:none; color:#8892b0; font-size:24px; cursor:pointer;">&times;</button>
+            </div>
+            <div id="pfLoading" style="text-align:center; padding:20px; color:#8892b0;">Loading seeds...</div>
+            <div id="pfContent" style="display:none;">
+                <div style="margin-bottom:15px;">
+                    <label class="label" style="font-size:11px; color:#8892b0; text-transform:uppercase; display:block; margin-bottom:5px;">Server Seed Hash (Active)</label>
+                    <input type="text" id="modalPFServerHash" readonly style="width:100%; background:#0a0b0e; border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:10px; color:white; font-size:11px; font-family:monospace;">
+                </div>
+                <div style="margin-bottom:15px;">
+                    <label class="label" style="font-size:11px; color:#8892b0; text-transform:uppercase; display:block; margin-bottom:5px;">Client Seed</label>
+                    <input type="text" id="modalPFClientSeed" readonly style="width:100%; background:#0a0b0e; border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:10px; color:white; font-family:monospace;">
+                </div>
+                <div style="margin-bottom:20px;">
+                    <label class="label" style="font-size:11px; color:#8892b0; text-transform:uppercase; display:block; margin-bottom:5px;">Nonce (Game Count)</label>
+                    <input type="text" id="modalPFNonce" readonly style="width:100%; background:#0a0b0e; border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:10px; color:white;">
+                </div>
+                <button onclick="revealAndRotatePF()" style="width:100%; background:#6366f1; color:white; border:none; padding:12px; border-radius:12px; font-weight:800; cursor:pointer;">Reveal & Rotate Seeds</button>
+                <div id="pfRevealedArea" style="display:none; margin-top:20px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.1);">
+                    <label class="label" style="color:#10b981; font-size:11px; text-transform:uppercase; display:block; margin-bottom:5px;">Revealed Server Seed</label>
+                    <input type="text" id="modalPFRevealedSeed" readonly style="width:100%; background:#0a0b0e; border:1px solid #10b981; border-radius:10px; padding:10px; color:white; font-size:11px; font-family:monospace;">
+                    <div id="modalPFVerify" style="font-size:12px; font-weight:800; color:#10b981; margin-top:5px;">✅ Hash Verified!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        async function openPFModal() {
+            document.getElementById('pfModal').style.display = 'flex';
+            document.getElementById('pfLoading').style.display = 'block';
+            document.getElementById('pfContent').style.display = 'none';
+            document.getElementById('pfRevealedArea').style.display = 'none';
+            try {
+                const r = await fetch('http://localhost:3001/api/provably-fair/seed', {
+                    method: 'POST', headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({ address: walletAddress })
+                });
+                const d = await r.json();
+                document.getElementById('modalPFServerHash').value = d.serverSeedHash;
+                document.getElementById('modalPFClientSeed').value = d.clientSeed;
+                document.getElementById('modalPFNonce').value = d.nonce;
+                document.getElementById('pfLoading').style.display = 'none';
+                document.getElementById('pfContent').style.display = 'block';
+            } catch(e) { console.error(e); }
+        }
+        function closePFModal() { document.getElementById('pfModal').style.display = 'none'; }
+        async function revealAndRotatePF() {
+            try {
+                const r = await fetch('http://localhost:3001/api/provably-fair/reveal', {
+                    method: 'POST', headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({ address: walletAddress })
+                });
+                const d = await r.json();
+                document.getElementById('pfRevealedArea').style.display = 'block';
+                document.getElementById('modalPFRevealedSeed').value = d.revealed.serverSeed;
+                const encoder = new TextEncoder();
+                const data = encoder.encode(d.revealed.serverSeed);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                const matches = hashHex === d.revealed.serverSeedHash;
+                document.getElementById('modalPFVerify').innerHTML = matches ? "✅ Hash Verified! Game was fair." : "❌ Hash Mismatch!";
+                document.getElementById('modalPFServerHash').value = d.newSeed.serverSeedHash;
+                document.getElementById('modalPFClientSeed').value = d.newSeed.clientSeed;
+                document.getElementById('modalPFNonce').value = 0;
+            } catch(e) { console.error(e); }
+        }
+    </script>
 </body>
 </html>

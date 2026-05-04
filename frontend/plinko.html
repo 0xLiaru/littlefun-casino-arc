@@ -42,7 +42,7 @@
         .history-table td { padding: 10px 8px; border-bottom: 1px solid rgba(255,255,255,0.02); }
         .win-text { color: var(--primary); font-weight: 800; }
         .loss-text { color: #f43f5e; opacity: 0.7; }
-        #adminPanel { display: none; background: linear-gradient(135deg, #1e1b4b, #312e81); border-color: var(--accent); }
+
 
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(99, 102, 241, 0); } 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); } }
     </style>
@@ -71,6 +71,7 @@
                 <input type="number" id="ballCount" value="5" min="1" max="50">
                 <button id="playBtn" class="play-btn" onclick="play()" disabled>LOGIN REQUIRED</button>
                 <button id="autoBtn" class="play-btn auto-btn" onclick="toggleAuto()" disabled>AUTO MODE: OFF</button>
+                <button class="diff-btn" onclick="openPFModal()" style="width:100%; margin-top:10px; border-color:var(--accent); color:var(--accent);">🎲 PROVABLY FAIR</button>
             </div>
 
             <div class="glass-card">
@@ -82,13 +83,7 @@
                 <div id="profitX" style="text-align:center; margin-top:15px; font-size:24px; font-weight:900; color:var(--text-muted);">0.00x</div>
             </div>
 
-            <div class="glass-card" id="adminPanel">
-                <label class="label" style="color:#fff;">ADMIN CONTROLS</label>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                    <button class="diff-btn" style="background:rgba(255,255,255,0.1); color:#fff;" onclick="adminWithdraw()">Withdraw All</button>
-                    <button class="diff-btn" style="background:rgba(255,255,255,0.1); color:#fff;" onclick="adminDeposit()">Add Funds</button>
-                </div>
-            </div>
+
         </div>
 
         <div class="game-area">
@@ -100,8 +95,43 @@
         </div>
     </main>
 
+    <!-- PROVABLY FAIR MODAL -->
+    <div id="pfModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:2000; align-items:center; justify-content:center; padding:20px;">
+        <div class="glass-card" style="width:100%; max-width:500px; margin-bottom:0;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h3 style="margin:0;">🎲 Provably Fair</h3>
+                <button onclick="closePFModal()" style="background:none; border:none; color:var(--text-muted); font-size:24px; cursor:pointer;">&times;</button>
+            </div>
+            
+            <div id="pfLoading" style="text-align:center; padding:20px; color:var(--text-muted);">Loading seeds...</div>
+            
+            <div id="pfContent" style="display:none;">
+                <div style="margin-bottom:15px;">
+                    <label class="label">Server Seed Hash (Active)</label>
+                    <input type="text" id="modalPFServerHash" readonly style="font-size:11px; font-family:monospace; background:rgba(0,0,0,0.3);">
+                </div>
+                <div style="margin-bottom:15px;">
+                    <label class="label">Client Seed</label>
+                    <input type="text" id="modalPFClientSeed" readonly style="font-family:monospace; background:rgba(0,0,0,0.3);">
+                </div>
+                <div style="margin-bottom:20px;">
+                    <label class="label">Nonce (Game Count)</label>
+                    <input type="text" id="modalPFNonce" readonly style="background:rgba(0,0,0,0.3);">
+                </div>
+                
+                <button class="play-btn" onclick="revealAndRotatePF()" style="background:var(--accent); color:white; font-size:14px; padding:12px;">Reveal & Rotate Seeds</button>
+                
+                <div id="pfRevealedArea" style="display:none; margin-top:20px; padding-top:20px; border-top:1px solid var(--border);">
+                    <label class="label" style="color:var(--primary);">Revealed Server Seed</label>
+                    <input type="text" id="modalPFRevealedSeed" readonly style="font-size:11px; font-family:monospace; border-color:var(--primary);">
+                    <div id="modalPFVerify" style="font-size:12px; font-weight:800; color:var(--primary); margin-top:5px;">✅ Hash Verified!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // CONTRACT_ADDRESS contract-config.js dosyasından otomatik gelir.
+        // CONTRACT_ADDRESS comes automatically from contract-config.js.
         if (typeof CONTRACT_ADDRESS === 'undefined') {
             var CONTRACT_ADDRESS = "0x922D6956C99E12DFeB3224DEA977D0939758A1Fe"; // Fallback
         }
@@ -145,7 +175,7 @@
                     document.getElementById('playBtn').disabled = false;
                     document.getElementById('autoBtn').disabled = false;
                     document.getElementById('balanceBadge').style.display = 'block';
-                    checkAdmin(); updateBalance();
+                    updateBalance();
                 }
             } catch (e) { console.error(e); }
         }
@@ -153,7 +183,7 @@
         // Auto-connect if already logged in on index
         window.addEventListener('load', () => { if (localStorage.getItem('isLoggedIn') === 'true') handleMainAction(); });
 
-        async function checkAdmin() { try { const owner = await contract.owner(); if (walletAddress.toLowerCase() === owner.toLowerCase()) document.getElementById('adminPanel').style.display = 'block'; } catch (e) {} }
+
         async function updateBalance() { if (!provider || !walletAddress) return; const b = await provider.getBalance(walletAddress); document.getElementById('balanceBadge').innerText = parseFloat(ethers.formatEther(b)).toFixed(4) + " ETH"; }
 
         const { Engine, Render, Runner, Bodies, Composite, Events, Body } = Matter;
@@ -206,7 +236,7 @@
                 if (addr) {
                     fetch('http://localhost:3001/api/user/transaction', {
                         method: 'POST', headers: {'Content-Type':'application/json'},
-                        body: JSON.stringify({ address: addr, gameName: 'ARCLINKO', totalBetETH, totalPayoutETH: txTotalPayout, ballCount: count, txHash: tx.hash, difficulty: currentDifficulty })
+                        body: JSON.stringify({ address: addr, gameName: 'ARCIKO', totalBetETH, totalPayoutETH: txTotalPayout, ballCount: count, txHash: tx.hash, difficulty: currentDifficulty })
                     }).catch(e => console.log('TX save failed:', e));
                 }
                 
@@ -232,12 +262,12 @@
                 fetch('http://localhost:3001/api/eth-price').then(r=>r.json()).then(priceData => {
                     fetch('http://localhost:3001/api/user/game-result', {
                         method: 'POST', headers: {'Content-Type':'application/json'},
-                        body: JSON.stringify({ address: addr, gameName: 'ARCLINKO', betETH: payout/mult, payoutETH: payout, multiplier: mult, ethPriceUSD: priceData.usd || 3500 })
+                        body: JSON.stringify({ address: addr, gameName: 'ARCIKO', betETH: payout/mult, payoutETH: payout, multiplier: mult, ethPriceUSD: priceData.usd || 3500 })
                     }).catch(e => console.log('API save failed:', e));
                 }).catch(() => {
                     fetch('http://localhost:3001/api/user/game-result', {
                         method: 'POST', headers: {'Content-Type':'application/json'},
-                        body: JSON.stringify({ address: addr, gameName: 'ARCLINKO', betETH: payout/mult, payoutETH: payout, multiplier: mult, ethPriceUSD: 3500 })
+                        body: JSON.stringify({ address: addr, gameName: 'ARCIKO', betETH: payout/mult, payoutETH: payout, multiplier: mult, ethPriceUSD: 3500 })
                     }).catch(e => console.log('API save failed:', e));
                 });
             }
@@ -245,15 +275,66 @@
             addToHistory(payout, mult);
         }
         function addToHistory(payout, mult) { const tbody = document.getElementById('historyBody'); const row = tbody.insertRow(0); row.innerHTML = `<td>${new Date().toLocaleTimeString()}</td><td>${document.getElementById('amount').value} ETH</td><td class="${mult >= 1 ? 'win-text' : 'loss-text'}">${mult}x</td><td class="${mult >= 1 ? 'win-text' : 'loss-text'}">${payout.toFixed(3)} ETH</td>`; if (tbody.rows.length > 15) tbody.deleteRow(15); }
-        async function adminWithdraw() { try { await contract.withdraw(); alert("Withdraw Success!"); } catch(e) { alert("Error!"); } }
-        async function adminDeposit() { const amt = prompt("Amount (ETH):", "1.0"); if (amt) { await contract.deposit({ value: ethers.parseEther(amt) }); alert("Deposit Success!"); } }
+
         function setDifficulty(d) { currentDifficulty = d; document.querySelectorAll('.diff-btn').forEach((btn, i) => btn.classList.toggle('active', i === d)); updateMultiplierUI(); }
         function updateMultiplierUI() { const row = document.getElementById('multiplier-row'); row.innerHTML = ''; diffData[currentDifficulty].mults.forEach((m, i) => { const box = document.createElement('div'); box.className = `mult-box`; box.style.color = diffData[currentDifficulty].colors[i]; box.setAttribute('data-slot', i); box.innerHTML = `<span class="win-popup"></span>${m}`; row.appendChild(box); }); }
-        engine.gravity.y = 1.2; // Biraz daha hizli dusus
+        engine.gravity.y = 1.2; // Falling slightly faster
         Render.run(render); 
         const runner = Runner.create();
         Runner.run(runner, engine); 
         updateMultiplierUI();
+
+        // PROVABLY FAIR JS
+        async function openPFModal() {
+            document.getElementById('pfModal').style.display = 'flex';
+            document.getElementById('pfLoading').style.display = 'block';
+            document.getElementById('pfContent').style.display = 'none';
+            document.getElementById('pfRevealedArea').style.display = 'none';
+            
+            try {
+                const r = await fetch('http://localhost:3001/api/provably-fair/seed', {
+                    method: 'POST', headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({ address: walletAddress })
+                });
+                const d = await r.json();
+                document.getElementById('modalPFServerHash').value = d.serverSeedHash;
+                document.getElementById('modalPFClientSeed').value = d.clientSeed;
+                document.getElementById('modalPFNonce').value = d.nonce;
+                
+                document.getElementById('pfLoading').style.display = 'none';
+                document.getElementById('pfContent').style.display = 'block';
+            } catch(e) { console.error(e); alert("Failed to load seeds"); }
+        }
+        
+        function closePFModal() { document.getElementById('pfModal').style.display = 'none'; }
+        
+        async function revealAndRotatePF() {
+            try {
+                const r = await fetch('http://localhost:3001/api/provably-fair/reveal', {
+                    method: 'POST', headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({ address: walletAddress })
+                });
+                const d = await r.json();
+                
+                // Show revealed
+                document.getElementById('pfRevealedArea').style.display = 'block';
+                document.getElementById('modalPFRevealedSeed').value = d.revealed.serverSeed;
+                
+                // Verify
+                const encoder = new TextEncoder();
+                const data = encoder.encode(d.revealed.serverSeed);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                const matches = hashHex === d.revealed.serverSeedHash;
+                document.getElementById('modalPFVerify').innerHTML = matches ? "✅ Hash Verified! Game was fair." : "❌ Hash Mismatch!";
+                
+                // Update active with new one
+                document.getElementById('modalPFServerHash').value = d.newSeed.serverSeedHash;
+                document.getElementById('modalPFClientSeed').value = d.newSeed.clientSeed;
+                document.getElementById('modalPFNonce').value = 0;
+            } catch(e) { console.error(e); }
+        }
     </script>
 </body>
 </html>
