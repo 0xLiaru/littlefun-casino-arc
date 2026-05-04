@@ -6,13 +6,22 @@ import { Trophy, Wallet, Activity, ShieldCheck } from "lucide-react";
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen w-full bg-[#050507] text-white selection:bg-emerald-500/30 overflow-x-hidden">
+    <main 
+      style={{ backgroundColor: '#050507', color: 'white', minHeight: '100vh', fontFamily: 'sans-serif' }}
+      className="relative min-h-screen w-full bg-[#050507] text-white selection:bg-emerald-500/30 overflow-x-hidden"
+    >
       {/* Background Glows */}
-      <div className="fixed top-0 left-1/4 w-[500px] h-[500px] bg-emerald-500/10 blur-[120px] rounded-full pointer-events-none z-0" />
+      <div 
+        style={{ position: 'fixed', top: 0, left: '25%', width: '500px', height: '500px', backgroundColor: 'rgba(16, 185, 129, 0.1)', filter: 'blur(120px)', borderRadius: '50%', pointerEvents: 'none', zIndex: 0 }}
+        className="fixed top-0 left-1/4 w-[500px] h-[500px] bg-emerald-500/10 blur-[120px] rounded-full pointer-events-none z-0" 
+      />
       <div className="fixed bottom-0 right-1/4 w-[500px] h-[500px] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none z-0" />
 
       {/* Navigation Header */}
-      <nav className="relative z-50 border-b border-white/5 bg-black/20 backdrop-blur-md px-6 py-4">
+      <nav 
+        style={{ position: 'relative', zIndex: 50, borderBottom: '1px solid rgba(255,255,255,0.05)', backgroundColor: 'rgba(0,0,0,0.2)', backdropFilter: 'blur(12px)', padding: '16px 24px' }}
+        className="relative z-50 border-b border-white/5 bg-black/20 backdrop-blur-md px-6 py-4"
+      >
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center font-black text-black text-xl shadow-lg shadow-emerald-500/20">L</div>
@@ -31,9 +40,12 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-6 py-12 relative z-10">
         {/* Welcome Section */}
         <div className="mb-16 text-center md:text-left">
-          <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-4 leading-tight">
+          <h1 
+            style={{ fontSize: '60px', fontWeight: 900, letterSpacing: '-0.05em', marginBottom: '16px', lineHeight: 1.1 }}
+            className="text-5xl md:text-7xl font-black tracking-tighter mb-4 leading-tight"
+          >
             THE PREMIUM <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-500">WEB3 CASINO.</span>
+            <span style={{ color: '#10b981' }} className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-500">WEB3 CASINO.</span>
           </h1>
           <p className="text-white/40 max-w-xl text-sm font-medium leading-relaxed">
             Experience next-generation gaming with provably fair mechanics, instant on-chain payouts, and an exclusive community of winners.
