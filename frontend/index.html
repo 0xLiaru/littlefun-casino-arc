@@ -357,7 +357,16 @@
                 localStorage.setItem('isLoggedIn', 'true');
                 localStorage.setItem('walletAddress', walletAddress);
                 updateUI(); closeModal();
+                }
             } catch (e) { console.error(e); }
+
+            if (eth) {
+                eth.on('accountsChanged', (accounts) => {
+                    if (accounts.length === 0) logout();
+                    else window.location.reload();
+                });
+                eth.on('chainChanged', () => window.location.reload());
+            }
         }
 
         async function updateUI() {

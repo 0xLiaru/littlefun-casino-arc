@@ -178,6 +178,14 @@
                     updateBalance();
                 }
             } catch (e) { console.error(e); }
+
+            if (eth) {
+                eth.on('accountsChanged', (accounts) => {
+                    if (accounts.length === 0) logout();
+                    else window.location.reload();
+                });
+                eth.on('chainChanged', () => window.location.reload());
+            }
         }
 
         // Auto-connect if already logged in on index
