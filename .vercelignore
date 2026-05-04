@@ -1,0 +1,9 @@
+supabase/
+backend/
+contracts/
+scripts/
+hardhat.config.js
+start.bat
+git_push.bat
+node_modules/
+.git/
