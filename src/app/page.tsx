@@ -44,7 +44,7 @@ export default function Home() {
             style={{ fontSize: '60px', fontWeight: 900, letterSpacing: '-0.05em', marginBottom: '16px', lineHeight: 1.1 }}
             className="text-5xl md:text-7xl font-black tracking-tighter mb-4 leading-tight"
           >
-            THE PREMIUM <br/>
+            THE ULTIMATE <br/>
             <span style={{ color: '#10b981' }} className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-500">WEB3 CASINO.</span>
           </h1>
           <p className="text-white/40 max-w-xl text-sm font-medium leading-relaxed">
