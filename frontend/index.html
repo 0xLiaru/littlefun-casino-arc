@@ -79,7 +79,7 @@
                 <!-- Blurred background to fill empty space -->
                 <div id="arciko-blur-bg" style="position: absolute; inset: -20px; background-size: cover; background-position: center; filter: blur(20px); opacity: 0.5; z-index: 1;"></div>
                 <input type="file" id="arciko-file-input" accept="image/*" style="display: none;">
-                <img id="arcikoImg" src="arciko.png" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 10;">
+                <img id="arcikoImg" src="https://lrekxibbwyeklpcgpyet.supabase.co/storage/v1/object/public/assets/arciko.png" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 10;">
                 
                 <!-- Upload Prompt (Visible only if specifically needed) -->
                 <div id="upload-prompt" style="display: none; z-index: 5; pointer-events: none;">
@@ -131,7 +131,7 @@
             if (savedImage) {
                 updateArcikoUI(savedImage);
             } else {
-                updateArcikoUI('arciko.png');
+                updateArcikoUI('https://lrekxibbwyeklpcgpyet.supabase.co/storage/v1/object/public/assets/arciko.png');
             }
 
             // If the default image fails, show the upload prompt
@@ -205,7 +205,7 @@
                 <!-- Blurred background to fill empty space -->
                 <div id="blackjack-blur-bg" style="position: absolute; inset: -20px; background-size: cover; background-position: center; filter: blur(20px); opacity: 0.5; z-index: 1;"></div>
                 <input type="file" id="blackjack-file-input" accept="image/*" style="display: none;">
-                <img id="blackjackImg" src="blackjack.png" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 10;">
+                <img id="blackjackImg" src="https://lrekxibbwyeklpcgpyet.supabase.co/storage/v1/object/public/assets/blackjack.png" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 10;">
                 
                 <!-- Upload Prompt (Visible only if specifically needed) -->
                 <div id="blackjack-upload-prompt" style="display: none; z-index: 5; pointer-events: none;">
@@ -257,7 +257,7 @@
             if (savedBlackjackImage) {
                 updateBlackjackUI(savedBlackjackImage);
             } else {
-                updateBlackjackUI('blackjack.png');
+                updateBlackjackUI('https://lrekxibbwyeklpcgpyet.supabase.co/storage/v1/object/public/assets/blackjack.png');
             }
 
             blackjackImg.onerror = function() {
