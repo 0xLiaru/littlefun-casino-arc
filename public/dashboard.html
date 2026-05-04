@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LITTLEFUN Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-area" onclick="location.href='index.html'">LITTLEFUN</div>
+        <div class="nav-item active" onclick="switchTab('overview',this)">📊 Overview</div>
+        <div class="nav-item" onclick="switchTab('leaderboard',this)">🏆 Leaderboard</div>
+        <div class="nav-item" onclick="switchTab('daily',this)">🎁 Daily Bonus</div>
+        <div class="nav-item" onclick="switchTab('games',this)">🎮 Games</div>
+        <div class="nav-item" onclick="switchTab('security',this)">🔒 Security</div>
+        <div class="nav-item" onclick="switchTab('transactions',this)">📜 Transactions</div>
+        <div class="nav-item" onclick="switchTab('affiliates',this)">🤝 Affiliates</div>
+        <div class="nav-item" onclick="switchTab('fairness',this)">🎲 Provably Fair</div>
+        <div class="nav-item logout" onclick="logout()">🚪 Logout</div>
+    </div>
+    <div class="main-content">
+        <div class="top-bar">
+            <h3>Welcome, <span id="userName" class="primary">Player</span></h3>
+            <div id="balanceBadge" class="balance-badge">0.000 ETH</div>
+        </div>
+        <div class="content-area">
+            <!-- OVERVIEW -->
+            <div id="overview" class="tab active">
+                <div id="tierBanner" class="tier-banner bronze-tier">
+                    <div class="tier-icon" id="tierIcon">🥉</div>
+                    <div class="tier-info">
+                        <div class="tier-header"><span id="tierName">BRONZE</span><span id="xpDisplay">0 / 10,000 XP</span></div>
+                        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+                        <div class="tier-sub" id="tierSub">10,000 XP left to Silver</div>
+                    </div>
+                </div>
+                <div class="grid-3">
+                    <div class="stat-box">
+                        <h4>Wagered</h4>
+                        <div class="stat-row"><span id="stWager">0.0000 ETH</span><button class="convert-btn" onclick="convertToUSD('stWager')">🔄 USD</button></div>
+                        <div class="usd-val" id="stWager_usd"></div>
+                    </div>
+                    <div class="stat-box">
+                        <h4>Won</h4>
+                        <div class="stat-row"><span id="stWon" class="green">0.0000 ETH</span><button class="convert-btn" onclick="convertToUSD('stWon')">🔄 USD</button></div>
+                        <div class="usd-val" id="stWon_usd"></div>
+                    </div>
+                    <div class="stat-box"><h4>Games</h4><div id="stGames" class="stat-val">0</div></div>
+                </div>
+                <!-- PROFILE SETTINGS -->
+                <div class="card profile-card">
+                    <h3>⚙️ Profile Settings</h3>
+                    <div class="form-group">
+                        <label>Display Name</label>
+                        <div class="input-row"><input type="text" id="nameIn" placeholder="Unique username" oninput="checkName()"><span id="nameStatus"></span></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <div class="input-row"><input type="email" id="emailIn" placeholder="example@email.com"><button class="btn-sm" id="sendCodeBtn" onclick="sendCode()">Send Code</button></div>
+                        <div id="emailStatus"></div>
+                        <div id="verifySection" style="display:none" class="verify-row">
+                            <input type="text" id="codeIn" placeholder="6-digit verification code" maxlength="6">
+                            <button class="btn-sm green" onclick="verifyCode()">Verify</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <div class="input-row">
+                            <select id="countryCode" style="width:140px;background:#0d1117;border:1px solid var(--border);border-radius:12px;padding:12px 8px;color:#fff;font-size:13px;font-weight:700">
+                                <option value="+90">🇹🇷 +90</option><option value="+1">🇺🇸 +1</option><option value="+44">🇬🇧 +44</option><option value="+49">🇩🇪 +49</option><option value="+33">🇫🇷 +33</option><option value="+34">🇪🇸 +34</option><option value="+39">🇮🇹 +39</option><option value="+31">🇳🇱 +31</option><option value="+7">🇷🇺 +7</option><option value="+81">🇯🇵 +81</option><option value="+82">🇰🇷 +82</option><option value="+86">🇨🇳 +86</option><option value="+91">🇮🇳 +91</option><option value="+55">🇧🇷 +55</option><option value="+61">🇦🇺 +61</option><option value="+971">🇦🇪 +971</option><option value="+994">🇦🇿 +994</option><option value="+995">🇬🇪 +995</option>
+                            </select>
+                            <input type="tel" id="phoneIn" placeholder="5XX XXX XXXX">
+                        </div>
+                    </div>
+                    <button class="btn save-btn" onclick="saveProfile()">💾 Save Profile</button>
+                </div>
+            </div>
+
+            <!-- LEADERBOARD -->
+            <div id="leaderboard" class="tab">
+                <h2>🏆 Global Leaderboard</h2>
+                <p class="muted" style="margin-bottom:20px">Top players by XP. Play, earn XP, and climb to the top!</p>
+                <div class="card" style="padding:0;overflow:hidden">
+                    <table class="tbl">
+                        <thead><tr><th>#</th><th>PLAYER</th><th>TIER</th><th>XP</th><th>WAGERED</th><th>WON</th><th>GAMES</th></tr></thead>
+                        <tbody id="leaderboardBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- DAILY BONUS -->
+            <div id="daily" class="tab">
+                <h2>🎁 Daily Bonus</h2>
+                <p class="muted" style="margin-bottom:20px">Log in every day to earn XP! Your rewards grow with your daily streak.</p>
+                <div class="daily-container">
+                    <div class="daily-streak-info">
+                        <div class="streak-circle" id="streakCircle">
+                            <span class="streak-number" id="streakNumber">0</span>
+                            <span class="streak-label">DAY STREAK</span>
+                        </div>
+                    </div>
+                    <div class="daily-rewards-grid" id="dailyRewardsGrid">
+                        <!-- Generated by JS -->
+                    </div>
+                    <button class="btn daily-claim-btn" id="dailyClaimBtn" onclick="claimDaily()">🎁 Claim Daily Reward!</button>
+                    <div id="dailyStatus" class="daily-status"></div>
+                    <button class="btn" id="dailyWithdrawBtn" onclick="withdrawBonus()" style="display:none; margin-top:15px; background:#10b981; color:white; font-weight:800;">💸 Withdraw Bonus Balance to Wallet</button>
+                </div>
+            </div>
+
+            <!-- GAMES -->
+            <div id="games" class="tab">
+                <h2>🎮 Game History</h2>
+                <div class="card" style="padding:0;overflow:hidden"><table class="tbl"><thead><tr><th>GAME</th><th>DATE</th><th>BET</th><th>MULT</th><th>PAYOUT</th><th>XP</th></tr></thead><tbody id="gamesList"></tbody></table></div>
+            </div>
+
+            <!-- SECURITY -->
+            <div id="security" class="tab">
+                <h2>🔒 Security Center</h2>
+                <div class="card" id="tfaCard">
+                    <h4>Two-Factor Authentication</h4>
+                    <p class="muted" id="tfaDesc">Protect your account with Google Authenticator or Authy.</p>
+                    <div id="tfaStatus" style="margin:12px 0;font-weight:800"></div>
+                    <div id="tfaSetupArea">
+                        <button class="btn" id="tfaSetupBtn" onclick="setup2FA()" style="margin-top:10px">🔐 Start 2FA Setup</button>
+                    </div>
+                    <div id="tfaQRArea" style="display:none;margin-top:20px">
+                        <div style="display:flex;gap:30px;align-items:flex-start">
+                            <div><img id="tfaQRImg" src="" alt="QR Code" style="width:200px;height:200px;border-radius:12px;border:2px solid var(--border)"></div>
+                            <div style="flex:1">
+                                <label style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Secret Key (Manual Entry)</label>
+                                <input type="text" id="tfaSecretDisplay" readonly class="ro-input" style="font-family:monospace;letter-spacing:3px;margin-top:6px">
+                                <label style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:15px;display:block">6-Digit Code from Google Authenticator</label>
+                                <div class="verify-row" style="margin-top:6px"><input type="text" id="tfaCodeIn" placeholder="000000" maxlength="6" style="letter-spacing:8px;font-size:18px;font-weight:900;text-align:center;max-width:200px"><button class="btn-sm green" onclick="verify2FA()">Verify & Enable</button></div>
+                                <div id="tfaVerifyStatus" style="font-size:12px;margin-top:8px;font-weight:700"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tfaDisableArea" style="display:none;margin-top:15px">
+                        <div class="verify-row"><input type="text" id="tfaDisableCode" placeholder="6-digit code" maxlength="6" style="letter-spacing:8px;font-size:18px;font-weight:900;text-align:center;max-width:200px"><button class="btn-sm" style="background:var(--red)" onclick="disable2FA()">Disable 2FA</button></div>
+                    </div>
+                </div>
+                <div class="card"><h4>Login History</h4>
+                    <div class="session-card"><div><strong>Chrome (Windows)</strong><br><small class="muted">182.xx.xx.12 • Turkey</small></div><span class="green bold">ACTIVE</span></div>
+                </div>
+            </div>
+
+            <!-- TRANSACTIONS -->
+            <div id="transactions" class="tab">
+                <h2>📜 Transaction History</h2>
+                <p class="muted" style="margin-bottom:15px">Every blockchain transaction is listed here.</p>
+                <div class="card" style="padding:0;overflow:hidden"><table class="tbl"><thead><tr><th>DATE</th><th>GAME</th><th>AMOUNT</th><th>TX HASH</th><th>STATUS</th></tr></thead><tbody id="txList"></tbody></table></div>
+            </div>
+
+            <!-- AFFILIATES -->
+            <div id="affiliates" class="tab">
+                <h2>🤝 Affiliate Dashboard</h2>
+                <div class="grid-3">
+                    <div class="stat-box"><h4>Total Earnings</h4><div class="green" id="affEarnings">0.0000 ETH</div></div>
+                    <div class="stat-box"><h4>Referrals</h4><div id="affCount">0</div></div>
+                    <div class="stat-box"><h4>Commission Rate</h4><div class="primary">5%</div></div>
+                </div>
+                <div class="card">
+                    <label>Referral Link</label>
+                    <div class="input-row"><input type="text" id="reLink" readonly><button class="btn" onclick="copyLink()">Copy</button></div>
+                </div>
+                <div class="card">
+                    <label>Apply Referral Code</label>
+                    <div class="input-row"><input type="text" id="refCodeInput" placeholder="Enter your friend's referral code"><button class="btn-sm green" onclick="applyRef()">Apply</button></div>
+                    <div id="refApplyStatus" style="margin-top:8px;font-weight:700"></div>
+                </div>
+                <div class="card" id="refListCard" style="display:none">
+                    <h4>Your Referrals</h4>
+                    <table class="tbl"><thead><tr><th>PLAYER</th><th>XP</th><th>JOINED</th></tr></thead><tbody id="refListBody"></tbody></table>
+                </div>
+            </div>
+
+            <!-- PROVABLY FAIR -->
+            <div id="fairness" class="tab">
+                <h2>🎲 Provably Fair</h2>
+                <p class="muted" style="margin-bottom:20px">You can verify that all game results are fair. The system uses the SHA-256 hash algorithm.</p>
+                <div class="card">
+                    <h4>🔐 Active Seed Info</h4>
+                    <div class="form-group">
+                        <label>Server Seed Hash (SHA-256)</label>
+                        <input type="text" id="pfServerHash" readonly class="ro-input" style="font-family:monospace;font-size:11px">
+                    </div>
+                    <div class="form-group">
+                        <label>Client Seed</label>
+                        <input type="text" id="pfClientSeed" readonly class="ro-input" style="font-family:monospace">
+                    </div>
+                    <div class="form-group">
+                        <label>Nonce (Game Count)</label>
+                        <input type="text" id="pfNonce" readonly class="ro-input" value="0">
+                    </div>
+                    <button class="btn" onclick="revealAndRotate()" style="background:#f59e0b;margin-top:10px">🔓 Reveal & Rotate Seed</button>
+                </div>
+                <div class="card" id="pfRevealedCard" style="display:none">
+                    <h4>🔓 Revealed Seed</h4>
+                    <div class="form-group">
+                        <label>Server Seed (Plaintext)</label>
+                        <input type="text" id="pfRevealedSeed" readonly class="ro-input" style="font-family:monospace;font-size:11px;color:#10b981">
+                    </div>
+                    <div class="form-group">
+                        <label>Hash Verification</label>
+                        <div id="pfVerifyResult" style="font-weight:800;color:#10b981">Checking SHA-256 hash match...</div>
+                    </div>
+                    <p class="muted" style="font-size:11px;margin-top:10px">💡 Tip: You can verify that the Server Seed matches the Server Seed Hash by passing it through a SHA-256 hash function.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+<script src="dashboard.js"></script>
+</body>
+</html>

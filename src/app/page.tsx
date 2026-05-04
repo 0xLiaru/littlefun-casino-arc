@@ -105,9 +105,17 @@ export default function Home() {
                 <div style={{ fontSize: '24px', fontBold: 900, color: '#2081e2', fontWeight: 900, cursor: 'pointer' }}>LITTLEFUN</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                     {isLoggedIn && (
-                        <div style={{ background: 'rgba(32, 129, 226, 0.1)', color: '#2081e2', padding: '8px 16px', borderRadius: '12px', fontWeight: 700, fontSize: '14px', border: '1px solid rgba(32, 129, 226, 0.2)' }}>
-                            {balance} ETH
-                        </div>
+                        <>
+                            <button 
+                                onClick={() => window.location.href = '/dashboard.html'}
+                                style={{ background: 'rgba(255, 255, 255, 0.05)', color: 'white', padding: '8px 16px', borderRadius: '12px', fontWeight: 700, fontSize: '14px', border: '1px solid rgba(255, 255, 255, 0.1)', cursor: 'pointer' }}
+                            >
+                                📊 Dashboard
+                            </button>
+                            <div style={{ background: 'rgba(32, 129, 226, 0.1)', color: '#2081e2', padding: '8px 16px', borderRadius: '12px', fontWeight: 700, fontSize: '14px', border: '1px solid rgba(32, 129, 226, 0.2)' }}>
+                                {balance} ETH
+                            </div>
+                        </>
                     )}
                     {!isLoggedIn ? (
                         <button 
@@ -162,7 +170,7 @@ export default function Home() {
                     <div style={{ padding: '30px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <div style={{ fontSize: '36px', fontWeight: 900, color: '#2081e2' }}>ARCIKO</div>
-                            <button onClick={() => enterGame('plinko.html')} style={{ background: '#2081e2', color: 'white', border: 'none', padding: '12px 30px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}>Play Now</button>
+                            <button onClick={() => enterGame('/plinko.html')} style={{ background: '#2081e2', color: 'white', border: 'none', padding: '12px 30px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}>Play Now</button>
                         </div>
                         <div style={{ height: '1px', background: 'rgba(255,255,255,0.05)' }}></div>
                         <table style={{ width: '100%', fontSize: '14px' }}>
@@ -183,7 +191,7 @@ export default function Home() {
                     <div style={{ padding: '30px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <div style={{ fontSize: '36px', fontWeight: 900, color: '#10b981' }}>BLACKJACK</div>
-                            <button onClick={() => enterGame('blackjack.html')} style={{ background: '#10b981', color: 'white', border: 'none', padding: '12px 30px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}>Play Now</button>
+                            <button onClick={() => enterGame('/blackjack.html')} style={{ background: '#10b981', color: 'white', border: 'none', padding: '12px 30px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}>Play Now</button>
                         </div>
                         <div style={{ height: '1px', background: 'rgba(255,255,255,0.05)' }}></div>
                         <table style={{ width: '100%', fontSize: '14px' }}>
