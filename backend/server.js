@@ -218,8 +218,12 @@ app.post('/api/blackjack/settle', async (req, res) => {
 
         res.json({ success: true, txHash: receipt.hash });
     } catch (e) {
-        console.error('Blackjack settle error:', e.message);
-        res.status(500).json({ error: e.message });
+        console.error('❌ [Blackjack Settle Error]:', e.message);
+        let errorMsg = e.message;
+        if (e.message.includes('insufficient funds')) {
+            errorMsg = 'System wallet (owner) has insufficient funds to pay out!';
+        }
+        res.status(500).json({ success: false, error: errorMsg });
     }
 });
 

@@ -23,7 +23,9 @@ function selectChip(val) {
         document.getElementById('customChipBox').style.display = 'none';
     }
     document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-    document.querySelector(`.chip[data-val="${val}"]`).classList.add('active');
+    if (document.querySelector(`.chip[data-val="${val}"]`)) {
+        document.querySelector(`.chip[data-val="${val}"]`).classList.add('active');
+    }
 }
 
 function updateCustomChip(val) {
@@ -87,12 +89,16 @@ function updateTableChips(inputId) {
     container.innerHTML = '';
     
     if (val > 0) {
-        const stackCount = Math.min(Math.ceil(val / 0.01), 6);
+        // Stack chips vertically
+        const stackCount = Math.min(Math.ceil(val / 0.01), 10);
         for (let i = 0; i < stackCount; i++) {
             const chip = document.createElement('div');
             chip.className = 'table-chip';
-            chip.style.bottom = `${i * 3}px`;
+            chip.style.top = '50%';
+            chip.style.left = '50%';
+            chip.style.transform = `translate(-50%, -${50 + (i * 3)}%)`; // Perfect stacking
             chip.style.borderColor = getChipColorByVal(val);
+            chip.style.zIndex = i;
             if (i === stackCount - 1) chip.innerText = val.toString();
             container.appendChild(chip);
         }
@@ -178,9 +184,7 @@ function renderHands(revealDealer = false, animate = true) {
     const ph = document.getElementById('playerHand');
     const dh = document.getElementById('dealerHand');
     
-    // Helper to sync hand DOM
     const syncHand = (container, cards, isDealer = false) => {
-        // Handle dealer face-down logic
         let cardHTMLs = [];
         if (isDealer && !revealDealer && cards.length > 0) {
             cardHTMLs.push(renderCard(cards[0]));
@@ -192,7 +196,6 @@ function renderHands(revealDealer = false, animate = true) {
         const currentNodes = container.querySelectorAll('.card');
         cardHTMLs.forEach((html, i) => {
             if (i < currentNodes.length) {
-                // Already exists, check if content changed (e.g., reveal)
                 const temp = document.createElement('div');
                 temp.innerHTML = html;
                 const newCard = temp.firstElementChild;
@@ -201,7 +204,6 @@ function renderHands(revealDealer = false, animate = true) {
                     currentNodes[i].className = newCard.className + (currentNodes[i].classList.contains('dealt') ? ' dealt' : '');
                 }
             } else {
-                // Add new card
                 container.insertAdjacentHTML('beforeend', html);
             }
         });
@@ -214,7 +216,6 @@ function renderHands(revealDealer = false, animate = true) {
         syncHand(sh, splitHandCards);
         document.getElementById('splitScore').innerText = handScore(splitHandCards);
         
-        // Highlight active hand
         if (currentHandIndex === 0) {
             document.getElementById('labelHand1').style.color = '#10b981';
             document.getElementById('labelHand2').style.color = '#a8b2c1';
@@ -224,7 +225,6 @@ function renderHands(revealDealer = false, animate = true) {
         }
     }
 
-    // Update Scores
     if (revealDealer) {
         document.getElementById('dealerScore').innerText = handScore(dealerCards);
     } else if (dealerCards.length > 0) {
@@ -232,18 +232,16 @@ function renderHands(revealDealer = false, animate = true) {
     }
     if (playerCards.length > 0) document.getElementById('playerScore').innerText = handScore(playerCards);
     
-    // Trigger deal animation for newly added cards
     if (animate) {
         requestAnimationFrame(() => {
             document.querySelectorAll('.card:not(.dealt)').forEach(c => {
-                c.offsetHeight; // force reflow
+                c.offsetHeight; 
                 c.classList.add('dealt');
             });
         });
     }
 }
 
-// Connect wallet - simple, no signature required
 async function connectWallet() {
     if (!window.ethereum) return alert('MetaMask not found!');
     try {
@@ -279,7 +277,6 @@ async function updateBalance() {
     } catch(e) {}
 }
 
-// Start game - place bet on contract
 async function startGame() {
     if (gameActive || !contract) return;
     betETH = parseFloat(document.getElementById('betAmount').value);
@@ -296,7 +293,6 @@ async function startGame() {
     document.getElementById('gameMessage').innerText = '';
     document.getElementById('gameMessage').classList.remove('show');
     
-    // Reset hands for new deal
     playerCards = [];
     dealerCards = [];
     splitHandCards = null;
@@ -311,10 +307,8 @@ async function startGame() {
     document.getElementById('playerScore').innerText = '';
     document.getElementById('splitScore').innerText = '';
     
-    ph = document.getElementById('playerHand');
-    dh = document.getElementById('dealerHand');
-    ph.innerHTML = '';
-    dh.innerHTML = '';
+    document.getElementById('playerHand').innerHTML = '';
+    document.getElementById('dealerHand').innerHTML = '';
     document.getElementById('bettingTableSpots').style.opacity = '0.3';
     document.getElementById('bettingTableSpots').style.pointerEvents = 'none';
     renderHands(false, false);
@@ -323,6 +317,8 @@ async function startGame() {
         const tx = await contract.placeBet({ value: ethers.parseEther(totalTxValue.toString()), gasLimit: 200000 });
         await tx.wait();
         
+        setTimeout(updateBalance, 500);
+
         document.getElementById('dealBtn').innerText = 'DEALING...';
         
         gameActive = true;
@@ -331,43 +327,34 @@ async function startGame() {
         createDeck();
 
         const delay = (ms) => new Promise(res => setTimeout(res, ms));
-
-        // Wait a bit after transaction before dealing (more realistic)
         await delay(1200);
 
-        // Sequential Dealing: Player -> Dealer -> Player -> Dealer
-        // 1. Player Card 1
         playerCards.push(deck.pop());
         dealSound.cloneNode(true).play();
         renderHands(false, true);
         await delay(600);
 
-        // 2. Dealer Card 1 (Up)
         dealerCards.push(deck.pop());
         dealSound.cloneNode(true).play();
         renderHands(false, true);
         await delay(800);
 
-        // 3. Player Card 2
         playerCards.push(deck.pop());
         dealSound.cloneNode(true).play();
         renderHands(false, true);
         await delay(800);
 
-        // 4. Dealer Card 2 (Down)
         dealerCards.push(deck.pop());
         dealSound.cloneNode(true).play();
         renderHands(false, true);
         await delay(500);
 
-        // Evaluate Side Bets after initial deal
         evaluateSideBets();
 
-        // --- INSURANCE CHECK ---
         if (dealerCards[0].rank === 'A' && handScore(playerCards) !== 21) {
             document.getElementById('insuranceModal').style.display = 'block';
             document.getElementById('dealBtn').innerText = 'INSURANCE?';
-            return; // Wait for insurance decision
+            return; 
         }
 
         continueGame();
@@ -404,13 +391,11 @@ function evaluateSideBets() {
     let p3Payout = 0;
     let msg = '';
     
-    // Perfect Pairs
     if (ppBetETH > 0 && playerCards.length === 2) {
         const c1 = playerCards[0], c2 = playerCards[1];
         if (c1.rank === c2.rank) {
             const isRed1 = c1.suit === '♥' || c1.suit === '♦';
             const isRed2 = c2.suit === '♥' || c2.suit === '♦';
-            
             if (c1.suit === c2.suit) {
                 ppPayout = ppBetETH * 25; msg += `🃏 Perfect Pair! (+${ppPayout.toFixed(3)}) `;
                 addWinningChipsToTable('ppBetAmount', 15);
@@ -424,15 +409,12 @@ function evaluateSideBets() {
         }
     }
 
-    // 21+3
     if (plus3BetETH > 0 && playerCards.length === 2 && dealerCards.length > 0) {
         const p1 = playerCards[0], p2 = playerCards[1], d1 = dealerCards[0];
         const suitsList = [p1.suit, p2.suit, d1.suit];
         const ranksList = [p1.rank, p2.rank, d1.rank];
-        
         const isFlush = suitsList[0] === suitsList[1] && suitsList[1] === suitsList[2];
         const isThreeOfKind = ranksList[0] === ranksList[1] && ranksList[1] === ranksList[2];
-        
         const rVals = ranksList.map(r => {
             if (r === 'A') return 14;
             if (r === 'K') return 13;
@@ -440,7 +422,6 @@ function evaluateSideBets() {
             if (r === 'J') return 11;
             return parseInt(r);
         }).sort((a, b) => a - b);
-        
         const isStr = (rVals[1] === rVals[0] + 1 && rVals[2] === rVals[1] + 1) || 
                        (rVals.includes(14) && rVals.includes(2) && rVals.includes(3));
 
@@ -473,40 +454,43 @@ function evaluateSideBets() {
         m.innerText = msg;
         m.className = 'game-message win show';
         winSound.cloneNode(true).play();
+        if (ppPayout > 0) showSideWinLabel('spot-pp', ppPayout);
+        if (p3Payout > 0) showSideWinLabel('spot-plus3', p3Payout);
         setTimeout(() => { m.classList.remove('show'); }, 3000);
     }
 }
 
+function showSideWinLabel(spotId, amount) {
+    const spot = document.getElementById(spotId);
+    if (!spot) return;
+    const label = document.createElement('div');
+    label.className = 'side-win-label';
+    label.innerText = `+${amount.toFixed(3)} ETH`;
+    spot.appendChild(label);
+    setTimeout(() => label.remove(), 4000);
+}
+
 async function continueGame() {
-    // Reveal dealer peak if they have Ace (for insurance check)
     if (dealerCards[0].rank === 'A' || cardValue(dealerCards[0]) === 10) {
-        const dealerBJ = handScore(dealerCards) === 21;
-        if (dealerBJ) {
-            await endGame('lose'); // Dealer has Blackjack
+        if (handScore(dealerCards) === 21) {
+            await endGame('lose'); 
             return;
         }
     }
-
-    // Check natural blackjack
     if (handScore(playerCards) === 21) {
         await endGame('blackjack');
         return;
     }
-
     document.getElementById('actionBtns').style.display = 'flex';
     document.getElementById('doubleBtn').style.display = playerCards.length === 2 ? 'block' : 'none';
-    
     const canSplit = playerCards.length === 2 && cardValue(playerCards[0]) === cardValue(playerCards[1]) && !splitHandCards;
     document.getElementById('splitBtn').style.display = canSplit ? 'block' : 'none';
-
     document.getElementById('dealBtn').innerText = 'IN GAME...';
     updateStats();
 }
 
 async function playerSplit() {
     if (!gameActive || playerCards.length !== 2) return;
-    if (cardValue(playerCards[0]) !== cardValue(playerCards[1])) return;
-
     try {
         document.getElementById('actionBtns').style.display = 'none';
         const tx = await contract.placeBet({ value: ethers.parseEther(originalBetETH.toString()), gasLimit: 200000 });
@@ -514,84 +498,58 @@ async function playerSplit() {
         splitBetETH = originalBetETH;
         sessionBet += splitBetETH;
     } catch(e) {
-        console.error('Split bet failed:', e);
         document.getElementById('actionBtns').style.display = 'flex';
         return;
     }
-
-    // 1. Move one card to split hand
     splitHandCards = [playerCards.pop()];
     currentHandIndex = 0;
-
     document.getElementById('splitHand').style.display = 'flex';
     document.getElementById('labelHand2').style.display = 'block';
-    
-    const delay = (ms) => new Promise(res => setTimeout(res, ms));
-
-    // Render the initial split (moving the card)
     renderHands(false, true);
-    await delay(600);
-
-    // 2. Deal new card to Hand 1
+    await new Promise(r => setTimeout(r, 600));
     playerCards.push(deck.pop());
     dealSound.cloneNode(true).play();
     renderHands(false, true);
-    await delay(600);
-
-    // 3. Deal new card to Hand 2
+    await new Promise(r => setTimeout(r, 600));
     splitHandCards.push(deck.pop());
     dealSound.cloneNode(true).play();
     renderHands(false, true);
-    await delay(600);
-
     document.getElementById('actionBtns').style.display = 'flex';
     document.getElementById('splitBtn').style.display = 'none'; 
     document.getElementById('doubleBtn').style.display = 'block';
-
     if (handScore(playerCards) === 21) playerStand();
-}
-
-function getActiveHand() {
-    return currentHandIndex === 0 ? playerCards : splitHandCards;
 }
 
 function playerHit() {
     if (!gameActive) return;
-    const activeHand = getActiveHand();
+    const activeHand = currentHandIndex === 0 ? playerCards : splitHandCards;
     activeHand.push(deck.pop());
     dealSound.cloneNode(true).play();
     renderHands(false);
-    
     document.getElementById('doubleBtn').style.display = 'none';
     document.getElementById('splitBtn').style.display = 'none';
-    
     if (handScore(activeHand) > 21) {
         if (splitHandCards && currentHandIndex === 0) {
             currentHandIndex = 1;
             renderHands(false);
-            document.getElementById('doubleBtn').style.display = 'block'; // Reset double for hand 2
-            if (handScore(getActiveHand()) === 21) playerStand();
+            document.getElementById('doubleBtn').style.display = 'block'; 
         } else {
-            // Check if BOTH hands busted (if split exists) or if single hand busted
             const h1Bust = handScore(playerCards) > 21;
             const h2Bust = splitHandCards ? handScore(splitHandCards) > 21 : true;
             if (h1Bust && h2Bust) endGame('bust');
             else { renderHands(true); dealerPlay(); }
         }
-    } else if (handScore(activeHand) === 21) {
-        playerStand();
-    }
+    } else if (handScore(activeHand) === 21) playerStand();
 }
 
 function playerStand() {
     if (!gameActive) return;
-    
     if (splitHandCards && currentHandIndex === 0) {
         currentHandIndex = 1;
         renderHands(false);
         document.getElementById('doubleBtn').style.display = 'block';
         document.getElementById('splitBtn').style.display = 'none';
-        if (handScore(getActiveHand()) === 21) playerStand();
+        if (handScore(splitHandCards) === 21) playerStand();
     } else {
         renderHands(true);
         dealerPlay();
@@ -600,41 +558,36 @@ function playerStand() {
 
 async function playerDouble() {
     if (!gameActive) return;
-    const activeHand = getActiveHand();
+    const activeHand = currentHandIndex === 0 ? playerCards : splitHandCards;
     if (activeHand.length !== 2) return;
-    
     try {
         document.getElementById('actionBtns').style.display = 'none';
-        const extraBet = originalBetETH;
-        const tx = await contract.placeBet({ value: ethers.parseEther(extraBet.toString()), gasLimit: 200000 });
+        const tx = await contract.placeBet({ value: ethers.parseEther(originalBetETH.toString()), gasLimit: 200000 });
         await tx.wait();
         if (currentHandIndex === 0) {
             betETH += originalBetETH;
+            document.getElementById('betAmount').value = betETH.toFixed(3);
         } else {
             splitBetETH += originalBetETH;
         }
+        updateTableChips('betAmount');
         sessionBet += originalBetETH;
+        setTimeout(updateBalance, 500);
     } catch(e) {
-        console.error('Double bet failed:', e);
         document.getElementById('actionBtns').style.display = 'flex';
         return;
     }
-    
-    const delay = (ms) => new Promise(res => setTimeout(res, ms));
-    await delay(600);
-    
+    await new Promise(r => setTimeout(r, 600));
     activeHand.push(deck.pop());
     dealSound.cloneNode(true).play();
     renderHands(false, true);
-    await delay(600);
-    
+    await new Promise(r => setTimeout(r, 600));
     if (handScore(activeHand) > 21) {
         if (splitHandCards && currentHandIndex === 0) {
             currentHandIndex = 1;
             document.getElementById('actionBtns').style.display = 'flex';
             renderHands(false);
             document.getElementById('doubleBtn').style.display = 'block';
-            if (handScore(getActiveHand()) === 21) playerStand();
         } else {
             const h1Bust = handScore(playerCards) > 21;
             const h2Bust = splitHandCards ? handScore(splitHandCards) > 21 : true;
@@ -649,8 +602,7 @@ async function playerDouble() {
 
 function dealerPlay() {
     document.getElementById('actionBtns').style.display = 'none';
-    
-    function dealerDraw() {
+    const dealerDraw = () => {
         if (handScore(dealerCards) < 17) {
             setTimeout(() => {
                 dealerCards.push(deck.pop());
@@ -659,14 +611,10 @@ function dealerPlay() {
                 dealerDraw();
             }, 900);
         } else {
-            setTimeout(() => determineWinner(), 400);
+            setTimeout(() => endGame('evaluate'), 400);
         }
-    }
+    };
     dealerDraw();
-}
-
-function determineWinner() {
-    endGame('evaluate');
 }
 
 async function endGame(reason) {
@@ -675,11 +623,8 @@ async function endGame(reason) {
     document.getElementById('insuranceModal').style.display = 'none';
     renderHands(true);
 
-    let totalPayoutETH = 0;
-    let anyWin = false;
-    let isBlackjack = false;
+    let totalPayoutETH = 0, anyWin = false, isBlackjack = false;
     const msg = document.getElementById('gameMessage');
-    
     const dScore = handScore(dealerCards);
     const dealerBust = dScore > 21;
     const dealerHasBJ = dScore === 21 && dealerCards.length === 2;
@@ -687,91 +632,62 @@ async function endGame(reason) {
     const evaluate = (cards, handBet) => {
         const pScore = handScore(cards);
         if (pScore > 21) return { s: 'BUST', p: 0 };
-        if (pScore === 21 && cards.length === 2 && !splitHandCards && reason === 'blackjack') {
-            return { s: 'BLACKJACK', p: handBet * 2.5 };
-        }
+        if (pScore === 21 && cards.length === 2 && !splitHandCards && reason === 'blackjack') return { s: 'BLACKJACK', p: handBet * 2.5 };
         if (reason === 'bust') return { s: 'BUST', p: 0 }; 
-        if (dealerBust) return { s: 'WIN', p: handBet * 2 };
-        if (pScore > dScore) return { s: 'WIN', p: handBet * 2 };
+        if (dealerBust || pScore > dScore) return { s: 'WIN', p: handBet * 2 };
         if (pScore === dScore) return { s: 'PUSH', p: handBet };
         return { s: 'LOSE', p: 0 };
     };
 
     if (splitHandCards) {
-        const res1 = evaluate(playerCards, betETH);
-        const res2 = evaluate(splitHandCards, splitBetETH);
+        const res1 = evaluate(playerCards, betETH), res2 = evaluate(splitHandCards, splitBetETH);
         totalPayoutETH = res1.p + res2.p;
         anyWin = res1.p > 0 || res2.p > 0;
-        
         msg.innerText = `H1: ${res1.s} | H2: ${res2.s}`;
-        if (res1.s === 'WIN' || res2.s === 'WIN') msg.className = 'game-message win show';
-        else if (res1.s === 'PUSH' && res2.s === 'PUSH') msg.className = 'game-message push show';
-        else msg.className = 'game-message lose show';
-        
+        msg.className = anyWin ? 'game-message win show' : 'game-message lose show';
         if (anyWin) winSound.cloneNode(true).play();
     } else {
         let res;
         if (reason === 'blackjack') { res = { s: '🃏 BLACKJACK!', p: betETH * 2.5 }; isBlackjack = true; }
         else if (reason === 'bust') res = { s: '💀 BUST!', p: 0 };
         else res = evaluate(playerCards, betETH);
-        
         totalPayoutETH = res.p;
         anyWin = totalPayoutETH > 0 && res.s !== 'PUSH';
-        
-        if (res.s === 'WIN') { msg.innerText = 'WIN'; msg.className = 'game-message win show'; }
-        else if (res.s === 'LOSE') { msg.innerText = dealerHasBJ ? '🃏 DEALER BJ!' : '😞 LOSE'; msg.className = 'game-message lose show'; }
-        else if (res.s === 'PUSH') { msg.innerText = '🤝 PUSH'; msg.className = 'game-message push show'; }
-        else { msg.innerText = res.s; msg.className = res.s.includes('WIN') || res.s.includes('BLACKJACK') ? 'game-message win show' : 'game-message lose show'; }
-        
-        if (anyWin || reason === 'blackjack') winSound.cloneNode(true).play();
+        msg.innerText = res.s;
+        msg.className = (anyWin || isBlackjack) ? 'game-message win show' : (res.s === 'PUSH' ? 'game-message push show' : 'game-message lose show');
+        if (anyWin || isBlackjack) winSound.cloneNode(true).play();
     }
 
-    // --- INSURANCE PAYOUT ---
-    if (hasInsurance) {
-        if (dealerHasBJ) {
-            const insPayout = insuranceBet * 3; // 2:1 win + stake back
-            totalPayoutETH += insPayout;
-            msg.innerText += " 🛡️ Insurance Paid!";
-        }
-        hasInsurance = false;
-        insuranceBet = 0;
-    }
-
-    // --- SIDE BETS PAYOUT ADDITION ---
+    if (hasInsurance && dealerHasBJ) { totalPayoutETH += insuranceBet * 3; msg.innerText += " 🛡️ Insurance Paid!"; }
     totalPayoutETH += sideBetPayoutETH;
     if (sideBetPayoutETH > 0) anyWin = true;
 
-    sessionPlayed++;
-    if (anyWin || isBlackjack) sessionWon++;
-    sessionWin += totalPayoutETH;
+    sessionPlayed++; if (anyWin || isBlackjack) sessionWon++; sessionWin += totalPayoutETH;
     updateStats();
 
-    // Settle via backend API
     try {
         const bjAddr = typeof BLACKJACK_ADDRESS !== 'undefined' ? BLACKJACK_ADDRESS : '';
-        const totalWagered = originalBetETH + splitBetETH + ppBetETH + plus3BetETH;
-        await fetch(`${API_URL}/api/blackjack/settle`, {
+        const totalWagered = originalBetETH + (splitBetETH||0) + ppBetETH + plus3BetETH;
+        const baseApi = (typeof API_URL !== 'undefined') ? API_URL : 'http://localhost:3001/api';
+        const settleUrl = baseApi.endsWith('/api') ? `${baseApi}/blackjack/settle` : `${baseApi}/api/blackjack/settle`;
+        const resp = await fetch(settleUrl, {
             method: 'POST', headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({ 
-                playerAddress: walletAddress, 
-                betETH: totalWagered, 
-                payoutETH: totalPayoutETH, 
-                playerWon: anyWin, 
-                isBlackjack, 
-                contractAddress: bjAddr,
-                sideBetDetails
-            })
+            body: JSON.stringify({ playerAddress: walletAddress, betETH: totalWagered, payoutETH: totalPayoutETH, playerWon: anyWin, isBlackjack, contractAddress: bjAddr, sideBetDetails })
         });
-    } catch(e) { console.log('Settle API error:', e); }
+        const data = await resp.json();
+        if (!resp.ok) { alert('⚠️ PAYOUT ERROR: ' + (data.error || 'Check backend.')); }
+        else { setTimeout(updateBalance, 2000); setTimeout(updateBalance, 5000); }
+    } catch(e) { alert('❌ Network Error: Run "node backend/server.js"'); }
 
-    let historyStatus = splitHandCards ? 'Split' : (reason === 'evaluate' ? (totalPayoutETH > 0 ? 'Win' : 'Lose') : reason);
-    addToHistory(historyStatus, totalPayoutETH);
-    updateBalance();
-
+    addToHistory(splitHandCards ? 'Split' : (totalPayoutETH > 0 ? 'Win' : 'Lose'), totalPayoutETH);
     document.getElementById('dealBtn').disabled = false;
     document.getElementById('dealBtn').innerText = '🃏 DEAL';
     document.getElementById('bettingTableSpots').style.opacity = '1';
     document.getElementById('bettingTableSpots').style.pointerEvents = 'all';
+    document.getElementById('ppBetAmount').value = 0;
+    document.getElementById('plus3BetAmount').value = 0;
+    updateTableChips('ppBetAmount');
+    updateTableChips('plus3BetAmount');
 }
 
 function updateStats() {
@@ -783,16 +699,11 @@ function updateStats() {
 
 function addToHistory(result, payout) {
     const tbody = document.getElementById('historyBody');
-    const totalBet = originalBetETH + splitBetETH + ppBetETH + plus3BetETH;
-    const cls = payout > totalBet ? 'green' : payout === totalBet ? '' : 'red';
-    const labels = { blackjack:'BLACKJACK 🃏', win:'WIN ✅', dealer_bust:'WIN ✅', push:'PUSH 🤝', bust:'BUST ❌', lose:'LOSE ❌' };
-    
-    let resText = labels[result] || labels[result.toLowerCase()] || result.toUpperCase();
-    
+    const totalBet = originalBetETH + (splitBetETH||0) + ppBetETH + plus3BetETH;
+    const cls = payout > totalBet ? 'green' : (payout === totalBet ? '' : 'red');
     const row = tbody.insertRow(0);
-    row.innerHTML = `<td>${new Date().toLocaleTimeString()}</td><td>${totalBet.toFixed(3)} ETH</td><td class="${cls}">${resText}</td><td class="${cls}">${payout.toFixed(3)} ETH</td>`;
+    row.innerHTML = `<td>${new Date().toLocaleTimeString()}</td><td>${totalBet.toFixed(3)} ETH</td><td class="${cls}">${result.toUpperCase()}</td><td class="${cls}">${payout.toFixed(3)} ETH</td>`;
     if (tbody.rows.length > 20) tbody.deleteRow(20);
 }
 
-// Auto-connect
 window.addEventListener('load', () => { if (localStorage.getItem('isLoggedIn') === 'true') connectWallet(); });
