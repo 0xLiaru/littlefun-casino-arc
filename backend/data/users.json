@@ -1,0 +1,754 @@
+{
+  "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266": {
+    "address": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+    "displayName": "baran",
+    "email": "baransteam35@gmail.com",
+    "emailVerified": false,
+    "phone": "",
+    "xp": 203700,
+    "tier": "gold",
+    "totalWageredETH": 58.20000000000002,
+    "totalWonETH": 32.100000000000016,
+    "totalGames": 68,
+    "gameHistory": [
+      {
+        "gameName": "BLACKJACK",
+        "betETH": "0.1000",
+        "payoutETH": "0.4000",
+        "multiplier": "4.00",
+        "result": "win",
+        "date": "2026-05-03T23:47:54.124Z",
+        "xpEarned": 350
+      },
+      {
+        "gameName": "BLACKJACK",
+        "betETH": "0.1000",
+        "payoutETH": "0.2000",
+        "multiplier": "2.00",
+        "result": "win",
+        "date": "2026-05-03T23:46:50.077Z",
+        "xpEarned": 350
+      },
+      {
+        "gameName": "BLACKJACK",
+        "betETH": "0.1000",
+        "payoutETH": "0.2000",
+        "multiplier": "2.00",
+        "result": "win",
+        "date": "2026-05-03T23:45:03.847Z",
+        "xpEarned": 350
+      },
+      {
+        "gameName": "BLACKJACK",
+        "betETH": "0.1000",
+        "payoutETH": "0.0000",
+        "multiplier": "0.00",
+        "result": "loss",
+        "date": "2026-05-03T23:43:00.164Z",
+        "xpEarned": 350
+      },
+      {
+        "gameName": "BLACKJACK",
+        "betETH": "0.1000",
+        "payoutETH": "0.2000",
+        "multiplier": "2.00",
+        "result": "win",
+        "date": "2026-05-03T23:42:50.778Z",
+        "xpEarned": 350
+      },
+      {
+        "gameName": "BLACKJACK",
+        "betETH": "0.1000",
+        "payoutETH": "0.2000",
+        "multiplier": "2.00",
+        "result": "win",
+        "date": "2026-05-03T23:39:49.222Z",
+        "xpEarned": 350
+      },
+      {
+        "gameName": "BLACKJACK",
+        "betETH": "0.1000",
+        "payoutETH": "0.0000",
+        "multiplier": "0.00",
+        "result": "loss",
+        "date": "2026-05-03T23:39:37.602Z",
+        "xpEarned": 350
+      },
+      {
+        "gameName": "BLACKJACK",
+        "betETH": "0.2000",
+        "payoutETH": "0.0000",
+        "multiplier": "0.00",
+        "result": "loss",
+        "date": "2026-05-03T23:39:26.242Z",
+        "xpEarned": 700
+      },
+      {
+        "gameName": "BLACKJACK",
+        "betETH": "0.1000",
+        "payoutETH": "0.0000",
+        "multiplier": "0.00",
+        "result": "loss",
+        "date": "2026-05-03T23:39:12.705Z",
+        "xpEarned": 350
+      },
+      {
+        "gameName": "BLACKJACK",
+        "betETH": "0.1000",
+        "payoutETH": "0.0000",
+        "multiplier": "0.00",
+        "result": "loss",
+        "date": "2026-05-03T23:36:25.322Z",
+        "xpEarned": 350
+      },
+      {
+        "gameName": "BLACKJACK",
+        "betETH": "0.1000",
+        "payoutETH": "0.2000",
+        "multiplier": "2.00",
+        "result": "win",
+        "date": "2026-05-03T23:33:16.997Z",
+        "xpEarned": 350
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:55.485Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:55.461Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:55.444Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:55.418Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:55.397Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:55.378Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "1.5000",
+        "multiplier": 1.5,
+        "result": "win",
+        "date": "2026-05-03T23:01:55.354Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:55.325Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:55.299Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:55.280Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:55.252Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.2000",
+        "multiplier": 0.2,
+        "result": "loss",
+        "date": "2026-05-03T23:01:55.228Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "2.0000",
+        "multiplier": 2,
+        "result": "win",
+        "date": "2026-05-03T23:01:55.202Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:55.163Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:55.143Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:55.116Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.2000",
+        "multiplier": 0.2,
+        "result": "loss",
+        "date": "2026-05-03T23:01:55.095Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:55.077Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.2000",
+        "multiplier": 0.2,
+        "result": "loss",
+        "date": "2026-05-03T23:01:55.049Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.2000",
+        "multiplier": 0.2,
+        "result": "loss",
+        "date": "2026-05-03T23:01:55.028Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:55.001Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.5000",
+        "multiplier": 0.5,
+        "result": "loss",
+        "date": "2026-05-03T23:01:54.988Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:54.955Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "2.0000",
+        "multiplier": 2,
+        "result": "win",
+        "date": "2026-05-03T23:01:54.938Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:54.913Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "2.0000",
+        "multiplier": 2,
+        "result": "win",
+        "date": "2026-05-03T23:01:54.893Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "2.0000",
+        "multiplier": 2,
+        "result": "win",
+        "date": "2026-05-03T23:01:54.876Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:54.838Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "1.0000",
+        "multiplier": 1,
+        "result": "win",
+        "date": "2026-05-03T23:01:54.811Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:54.780Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "1.5000",
+        "multiplier": 1.5,
+        "result": "win",
+        "date": "2026-05-03T23:01:54.761Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:54.743Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:54.706Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "1.5000",
+        "multiplier": 1.5,
+        "result": "win",
+        "date": "2026-05-03T23:01:54.690Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "1.5000",
+        "multiplier": 1.5,
+        "result": "win",
+        "date": "2026-05-03T23:01:54.657Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "1.5000",
+        "multiplier": 1.5,
+        "result": "win",
+        "date": "2026-05-03T23:01:54.604Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:54.312Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:54.159Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:53.996Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:53.701Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:53.421Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:52.967Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "2.0000",
+        "multiplier": 2,
+        "result": "win",
+        "date": "2026-05-03T23:01:52.942Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:52.911Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.2000",
+        "multiplier": 0.2,
+        "result": "loss",
+        "date": "2026-05-03T23:01:52.881Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:52.826Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:52.759Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:52.722Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:52.678Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "1.5000",
+        "multiplier": 1.5,
+        "result": "win",
+        "date": "2026-05-03T23:01:52.644Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "1.5000",
+        "multiplier": 1.5,
+        "result": "win",
+        "date": "2026-05-03T23:01:52.615Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "2.0000",
+        "multiplier": 2,
+        "result": "win",
+        "date": "2026-05-03T23:01:52.592Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.2000",
+        "multiplier": 0.2,
+        "result": "loss",
+        "date": "2026-05-03T23:01:52.522Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:52.461Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:52.218Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "0.1000",
+        "multiplier": 0.1,
+        "result": "loss",
+        "date": "2026-05-03T23:01:52.182Z",
+        "xpEarned": 3500
+      },
+      {
+        "gameName": "ARCLINKO",
+        "betETH": "1.0000",
+        "payoutETH": "2.0000",
+        "multiplier": 2,
+        "result": "win",
+        "date": "2026-05-03T23:01:52.150Z",
+        "xpEarned": 3500
+      }
+    ],
+    "verificationCode": "696762",
+    "verificationExpiry": 1777849310968,
+    "createdAt": "2026-05-03T22:52:40.762Z",
+    "transactions": [
+      {
+        "gameName": "BLACKJACK",
+        "totalBetETH": "0.1000",
+        "totalPayoutETH": "0.4000",
+        "profit": "0.3000",
+        "ballCount": 1,
+        "txHash": "0xa2520a07eceab47f21d4e3b11420032c2e4921ed8231d3bef316dc654a78c9f2",
+        "difficulty": "Unknown",
+        "result": "profit",
+        "date": "2026-05-03T23:47:54.126Z"
+      },
+      {
+        "gameName": "BLACKJACK",
+        "totalBetETH": "0.1000",
+        "totalPayoutETH": "0.2000",
+        "profit": "0.1000",
+        "ballCount": 1,
+        "txHash": "0x8040409b1b17ae949220a8db91028b6a64ea5f9a3082dbe793881da62e8f73cc",
+        "difficulty": "Unknown",
+        "result": "profit",
+        "date": "2026-05-03T23:46:50.080Z"
+      },
+      {
+        "gameName": "BLACKJACK",
+        "totalBetETH": "0.1000",
+        "totalPayoutETH": "0.2000",
+        "profit": "0.1000",
+        "ballCount": 1,
+        "txHash": "0x11482f1e4ea9fc2996d0478a202827500a8f581d3c082d48289b37573d01fda6",
+        "difficulty": "Unknown",
+        "result": "profit",
+        "date": "2026-05-03T23:45:03.849Z"
+      },
+      {
+        "gameName": "BLACKJACK",
+        "totalBetETH": "0.1000",
+        "totalPayoutETH": "0.0000",
+        "profit": "-0.1000",
+        "ballCount": 1,
+        "txHash": "0x8fdac32cf8c02e8d3afdb5d828eb6b4954545ea2a23c21a0c9c538086e021b74",
+        "difficulty": "Unknown",
+        "result": "loss",
+        "date": "2026-05-03T23:43:00.166Z"
+      },
+      {
+        "gameName": "BLACKJACK",
+        "totalBetETH": "0.1000",
+        "totalPayoutETH": "0.2000",
+        "profit": "0.1000",
+        "ballCount": 1,
+        "txHash": "0xf98e9d4b1cca80ab91d3abe35650e9ba16eefda9711be07a9b1fcabf21d22fe0",
+        "difficulty": "Unknown",
+        "result": "profit",
+        "date": "2026-05-03T23:42:50.779Z"
+      },
+      {
+        "gameName": "BLACKJACK",
+        "totalBetETH": "0.1000",
+        "totalPayoutETH": "0.2000",
+        "profit": "0.1000",
+        "ballCount": 1,
+        "txHash": "0x23551e45e739213fdfc3abe92f125e8a2ffc3becc7b24718383de9ab64640583",
+        "difficulty": "Unknown",
+        "result": "profit",
+        "date": "2026-05-03T23:39:49.223Z"
+      },
+      {
+        "gameName": "BLACKJACK",
+        "totalBetETH": "0.1000",
+        "totalPayoutETH": "0.0000",
+        "profit": "-0.1000",
+        "ballCount": 1,
+        "txHash": "0x405ebe2fb3a73a696ca845da87b70c99876c760cac0de2209b1f6aa6fa6ef433",
+        "difficulty": "Unknown",
+        "result": "loss",
+        "date": "2026-05-03T23:39:37.603Z"
+      },
+      {
+        "gameName": "BLACKJACK",
+        "totalBetETH": "0.2000",
+        "totalPayoutETH": "0.0000",
+        "profit": "-0.2000",
+        "ballCount": 1,
+        "txHash": "0x1a37464223ad3251c777f81db647d59df73a2ac435d1d44945902f9abf0b818c",
+        "difficulty": "Unknown",
+        "result": "loss",
+        "date": "2026-05-03T23:39:26.244Z"
+      },
+      {
+        "gameName": "BLACKJACK",
+        "totalBetETH": "0.1000",
+        "totalPayoutETH": "0.0000",
+        "profit": "-0.1000",
+        "ballCount": 1,
+        "txHash": "0x94f6cb0e9dc202a82b24dbcffc041cd73033df052d86a19139616d7ff0dc2f02",
+        "difficulty": "Unknown",
+        "result": "loss",
+        "date": "2026-05-03T23:39:12.706Z"
+      },
+      {
+        "gameName": "BLACKJACK",
+        "totalBetETH": "0.1000",
+        "totalPayoutETH": "0.0000",
+        "profit": "-0.1000",
+        "ballCount": 1,
+        "txHash": "0x60d9440a59fc6837c9c611f476f8e3c47b0ea33c6c046bb3c168ae7bc693e903",
+        "difficulty": "Unknown",
+        "result": "loss",
+        "date": "2026-05-03T23:36:25.323Z"
+      },
+      {
+        "gameName": "BLACKJACK",
+        "totalBetETH": "0.1000",
+        "totalPayoutETH": "0.2000",
+        "profit": "0.1000",
+        "ballCount": 1,
+        "txHash": "0x95769b45e60d9e76092070b3750310079f54f101eb75b651ee68e2a903fee4e4",
+        "difficulty": "Unknown",
+        "result": "profit",
+        "date": "2026-05-03T23:33:16.998Z"
+      }
+    ]
+  }
+}

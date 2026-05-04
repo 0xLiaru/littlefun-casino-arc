@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LITTLEFUN | Premium Web3 Plinko</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+    <script src="contract-config.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+    <style>
+        :root { --bg-dark: #0a0b0e; --card-bg: #16181d; --primary: #10b981; --text: #ffffff; --text-muted: #8892b0; --border: rgba(255, 255, 255, 0.08); --accent: #6366f1; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
+        body { background: var(--bg-dark); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+        
+        header { padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); background: rgba(10, 11, 14, 0.8); backdrop-filter: blur(20px); z-index: 100; position: sticky; top: 0; }
+        .logo { font-size: 24px; font-weight: 800; background: linear-gradient(135deg, #10b981, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px; cursor: pointer; text-decoration: none; }
+        
+        main { flex: 1; display: grid; grid-template-columns: 350px 1fr; gap: 20px; padding: 20px 40px; max-width: 1400px; margin: 0 auto; width: 100%; }
+        .glass-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
+        .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; font-weight: 700; }
+        
+        input { width: 100%; background: #0a0b0e; border: 1px solid var(--border); border-radius: 12px; padding: 12px; color: white; font-size: 16px; font-weight: 600; margin-bottom: 15px; outline: none; }
+        .diff-selector { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+        .diff-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: var(--text-muted); padding: 12px; border-radius: 12px; cursor: pointer; font-size: 11px; font-weight: 800; }
+        .diff-btn.active { background: rgba(16, 185, 129, 0.1); color: var(--primary); border-color: var(--primary); }
+        
+        .play-btn { background: var(--primary); color: #000; border: none; padding: 18px; border-radius: 16px; font-weight: 800; cursor: pointer; width: 100%; font-size: 16px; box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3); }
+        .play-btn:disabled { opacity: 0.3; }
+        
+        .auto-btn { background: rgba(99, 102, 241, 0.1); color: var(--accent); border: 1px solid var(--accent); margin-top: 10px; padding: 12px; font-size: 12px; }
+        .auto-btn.active { background: var(--accent); color: #fff; animation: pulse 2s infinite; }
+
+        .game-container { background: rgba(255,255,255,0.01); border-radius: 30px; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; position: relative; padding-bottom: 60px; min-height: 650px; }
+        #plinko-canvas { max-width: 100%; height: auto; }
+        .multipliers { display: flex; justify-content: center; width: 572px; padding: 0; margin-top: -65px; z-index: 10; gap: 0; }
+        .mult-box { width: 44px; height: 44px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 900; background: #1a1c23; border: 1px solid rgba(255,255,255,0.05); transition: 0.15s; position: relative; }
+        .mult-box.hit { transform: scale(1.4) translateY(-10px); z-index: 20; background: white; color: black; border: 1px solid #fff; }
+        
+        .history-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .history-table th { text-align: left; padding: 8px; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+        .history-table td { padding: 10px 8px; border-bottom: 1px solid rgba(255,255,255,0.02); }
+        .win-text { color: var(--primary); font-weight: 800; }
+        .loss-text { color: #f43f5e; opacity: 0.7; }
+        #adminPanel { display: none; background: linear-gradient(135deg, #1e1b4b, #312e81); border-color: var(--accent); }
+
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(99, 102, 241, 0); } 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); } }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo">LITTLEFUN</a>
+        <div class="user-info" style="display:flex; gap:10px; align-items:center;">
+            <div id="balanceBadge" style="display:none; background: rgba(16,185,129,0.1); color: var(--primary); padding: 8px 15px; border-radius: 12px; border: 1px solid var(--primary); font-weight: 800; font-size: 14px;">0.00 ETH</div>
+            <button id="mainActionBtn" class="play-btn" onclick="handleMainAction()" style="padding:10px 20px; width:auto; border-radius:12px; font-size:14px;">Connect Wallet</button>
+        </div>
+    </header>
+
+    <main>
+        <div class="sidebar">
+            <div class="glass-card">
+                <label class="label">Risk Level</label>
+                <div class="diff-selector">
+                    <button class="diff-btn active" id="d0" onclick="setDifficulty(0)">EASY</button>
+                    <button class="diff-btn" id="d1" onclick="setDifficulty(1)">MEDIUM</button>
+                    <button class="diff-btn" id="d2" onclick="setDifficulty(2)">HARD</button>
+                </div>
+                <label class="label">Bet Amount (ETH)</label>
+                <input type="number" id="amount" value="0.1" step="0.01">
+                <label class="label">Number of Balls</label>
+                <input type="number" id="ballCount" value="5" min="1" max="50">
+                <button id="playBtn" class="play-btn" onclick="play()" disabled>LOGIN REQUIRED</button>
+                <button id="autoBtn" class="play-btn auto-btn" onclick="toggleAuto()" disabled>AUTO MODE: OFF</button>
+            </div>
+
+            <div class="glass-card">
+                <label class="label">Session Stats</label>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <div style="background:rgba(255,255,255,0.02); padding:15px; border-radius:15px; text-align:center;"><div class="label" style="margin-bottom:0">TOTAL BET</div><div id="totalBet" style="font-size:15px; font-weight:800;">0.000</div></div>
+                    <div style="background:rgba(255,255,255,0.02); padding:15px; border-radius:15px; text-align:center;"><div class="label" style="margin-bottom:0">TOTAL WIN</div><div id="totalWin" style="font-size:15px; font-weight:800;">0.000</div></div>
+                </div>
+                <div id="profitX" style="text-align:center; margin-top:15px; font-size:24px; font-weight:900; color:var(--text-muted);">0.00x</div>
+            </div>
+
+            <div class="glass-card" id="adminPanel">
+                <label class="label" style="color:#fff;">ADMIN CONTROLS</label>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <button class="diff-btn" style="background:rgba(255,255,255,0.1); color:#fff;" onclick="adminWithdraw()">Withdraw All</button>
+                    <button class="diff-btn" style="background:rgba(255,255,255,0.1); color:#fff;" onclick="adminDeposit()">Add Funds</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-area">
+            <div class="game-container">
+                <canvas id="plinko-canvas"></canvas>
+                <div class="multipliers" id="multiplier-row"></div>
+            </div>
+            <div class="glass-card"><label class="label">LIVE BETTING HISTORY</label><table class="history-table"><thead><tr><th>Time</th><th>Bet</th><th>Mult</th><th>Payout</th></tr></thead><tbody id="historyBody"></tbody></table></div>
+        </div>
+    </main>
+
+    <script>
+        // CONTRACT_ADDRESS contract-config.js dosyasından otomatik gelir.
+        if (typeof CONTRACT_ADDRESS === 'undefined') {
+            var CONTRACT_ADDRESS = "0x922D6956C99E12DFeB3224DEA977D0939758A1Fe"; // Fallback
+        }
+        const ABI = [
+            "function playMultiple(uint256 count, uint8 difficulty) external payable", 
+            "function withdraw() external", "function deposit() external payable", "function owner() public view returns (address)",
+            "event GameResult(address indexed player, uint256 amountIn, uint256 amountOut, uint256 multiplierScaled, uint256 slotIndex, uint8 difficulty)"
+        ];
+        
+        let provider, signer, contract, currentDifficulty = 0, walletAddress = null, isSigned = false;
+        let sessionBet = 0, sessionWin = 0, isAuto = false, autoInterval = null;
+
+        const tickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3');
+        const winSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2014/2014-preview.mp3');
+        tickSound.volume = 0.2; winSound.volume = 0.4;
+
+        const diffData = [
+            { name: 'easy', mults: ['2x','1.5x','1x','0.5x','0.2x','0.1x','0.1x','0.1x','0.2x','0.5x','1x','1.5x','2x'], colors: ['#10b981','#10b981','#10b981','#94a3b8','#475569','#475569','#f43f5e','#475569','#475569','#94a3b8','#10b981','#10b981','#10b981'] },
+            { name: 'medium', mults: ['8x','4x','2x','1.5x','1x','0.5x','0.2x','0.5x','1x','1.5x','2x','4x','8x'], colors: ['#fbbf24','#fbbf24','#fbbf24','#10b981','#94a3b8','#475569','#f43f5e','#475569','#94a3b8','#10b981','#fbbf24','#fbbf24','#fbbf24'] },
+            { name: 'hard', mults: ['1000x','100x','5x','1x','0.1x','0.1x','0.1x','0.1x','0.1x','1x','5x','100x','1000x'], colors: ['#f43f5e','#f43f5e','#fbbf24','#10b981','#475569','#475569','#475569','#475569','#475569','#10b981','#fbbf24','#f43f5e','#f43f5e'] }
+        ];
+
+        async function handleMainAction() {
+            let eth = window.ethereum;
+            const walletType = localStorage.getItem('walletType');
+            if (walletType === 'okx') eth = window.okxwallet || eth;
+            if (walletType === 'trust' && window.trustwallet) eth = window.trustwallet;
+            if (walletType === 'rabby' && window.rabby) eth = window.rabby;
+            
+            if (!eth) return alert("Please connect wallet on the Home page first!");
+
+            try {
+                provider = new ethers.BrowserProvider(eth);
+                const accs = await eth.request({ method: 'eth_requestAccounts' });
+                walletAddress = accs[0]; signer = await provider.getSigner();
+                if (!isSigned) {
+                    await signer.signMessage("LITTLEFUN Verification");
+                    isSigned = true; contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+                    document.getElementById('mainActionBtn').innerText = walletAddress.slice(0,6)+"...";
+                    document.getElementById('playBtn').innerText = "DROP BALLS";
+                    document.getElementById('playBtn').disabled = false;
+                    document.getElementById('autoBtn').disabled = false;
+                    document.getElementById('balanceBadge').style.display = 'block';
+                    checkAdmin(); updateBalance();
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        // Auto-connect if already logged in on index
+        window.addEventListener('load', () => { if (localStorage.getItem('isLoggedIn') === 'true') handleMainAction(); });
+
+        async function checkAdmin() { try { const owner = await contract.owner(); if (walletAddress.toLowerCase() === owner.toLowerCase()) document.getElementById('adminPanel').style.display = 'block'; } catch (e) {} }
+        async function updateBalance() { if (!provider || !walletAddress) return; const b = await provider.getBalance(walletAddress); document.getElementById('balanceBadge').innerText = parseFloat(ethers.formatEther(b)).toFixed(4) + " ETH"; }
+
+        const { Engine, Render, Runner, Bodies, Composite, Events, Body } = Matter;
+        const engine = Engine.create();
+        const render = Render.create({ canvas: document.getElementById('plinko-canvas'), engine: engine, options: { width: 600, height: 600, wireframes: false, background: 'transparent' } });
+        const pinSpacing = 44; const xOffset = (600 - 13 * pinSpacing) / 2;
+        for (let i = 0; i < 12; i++) { const rowPins = i + 3; const rowOffset = (600 - (rowPins - 1) * pinSpacing) / 2; for (let j = 0; j < rowPins; j++) { Composite.add(engine.world, Bodies.circle(rowOffset + j * pinSpacing, 60 + i * 42, 3, { isStatic: true, restitution: 0.8, friction: 0.1, render: { fillStyle: '#ffffff15' } })); } }
+        Events.on(engine, 'beforeUpdate', () => { const balls = Composite.allBodies(engine.world).filter(b => b.label === 'ball'); balls.forEach(ball => { if (ball.position.y > 480 && ball.targetX) { Body.setVelocity(ball, { x: ball.velocity.x * 0.95 + (ball.targetX - ball.position.x) * 0.05, y: ball.velocity.y }); } }); });
+        for (let i = 0; i < 13; i++) { Composite.add(engine.world, Bodies.rectangle(xOffset + i * pinSpacing + (pinSpacing/2), 560, 40, 60, { isSensor: true, isStatic: true, render: { fillStyle: 'transparent' }, label: 's_' + i })); }
+        Events.on(engine, 'collisionStart', (e) => { e.pairs.forEach(p => { const s = [p.bodyA.label, p.bodyB.label].find(l => l.startsWith('s_')); if (s) { const ball = p.bodyA.label === s ? p.bodyB : p.bodyA; if (ball.label === 'ball') { animateHit(parseInt(s.split('_')[1]), ball.payout || 0, ball.mult || 0); Composite.remove(engine.world, ball); } } else if ([p.bodyA.label, p.bodyB.label].includes('ball')) { tickSound.cloneNode(true).play(); } }); });
+
+        async function play(bundleCount = null) {
+            const count = bundleCount || parseInt(document.getElementById('ballCount').value);
+            const amt = document.getElementById('amount').value;
+            const totalVal = ethers.parseEther((amt * count).toString());
+            sessionBet += parseFloat(amt * count); document.getElementById('totalBet').innerText = sessionBet.toFixed(3);
+            try {
+                const tx = await contract.playMultiple(count, currentDifficulty, { value: totalVal, gasLimit: 1200000 });
+                const receipt = await tx.wait(); const iface = new ethers.Interface(ABI);
+                
+                let txTotalPayout = 0;
+                let ballResults = [];
+                
+                receipt.logs.forEach(l => {
+                    const p = iface.parseLog(l);
+                    if (p && p.name === "GameResult") {
+                        const s = Number(p.args.slotIndex); const m = Number(p.args.multiplierScaled) / 100;
+                        const payout = parseFloat(ethers.formatEther(p.args.amountOut));
+                        const betPerBall = parseFloat(amt);
+                        txTotalPayout += payout;
+                        ballResults.push({ slot: s, mult: m, payout, bet: betPerBall });
+                        
+                        let visualSlot = s;
+                        if (s === 0) visualSlot = (Math.random() > 0.5 ? 0 : 12); else if (s === 1) visualSlot = (Math.random() > 0.5 ? 1 : 11); else if (s === 2) visualSlot = (Math.random() > 0.5 ? 2 : 10); else if (s === 3) visualSlot = (Math.random() > 0.5 ? 3 : 9); else if (s === 4) visualSlot = (Math.random() > 0.5 ? 4 : 8); else if (s === 5) visualSlot = (Math.random() > 0.5 ? 5 : 7); else visualSlot = 6;
+                        setTimeout(() => {
+                            const ball = Bodies.circle(300 + (Math.random() * 10 - 5), 5, 8, { 
+                                restitution: 0.5, friction: 0.001, label: 'ball', render: { fillStyle: '#10b981' } 
+                            });
+                            ball.payout = payout; ball.mult = m; 
+                            ball.targetX = xOffset + visualSlot * pinSpacing + (pinSpacing/2); 
+                            Composite.add(engine.world, ball);
+                            Body.setVelocity(ball, { x: (Math.random() - 0.5) * 2, y: 2 });
+                        }, Math.random() * 800);
+                    }
+                });
+                
+                // Save ONE transaction record (not per-ball)
+                const addr = walletAddress || localStorage.getItem('walletAddress');
+                const totalBetETH = parseFloat(amt) * count;
+                if (addr) {
+                    fetch('http://localhost:3001/api/user/transaction', {
+                        method: 'POST', headers: {'Content-Type':'application/json'},
+                        body: JSON.stringify({ address: addr, gameName: 'ARCLINKO', totalBetETH, totalPayoutETH: txTotalPayout, ballCount: count, txHash: tx.hash, difficulty: currentDifficulty })
+                    }).catch(e => console.log('TX save failed:', e));
+                }
+                
+                updateBalance();
+            } catch (e) { console.error(e); }
+        }
+
+        function toggleAuto() { isAuto = !isAuto; const btn = document.getElementById('autoBtn'); if (isAuto) { btn.innerText = "AUTO MODE: ON (10 Ball Bundles)"; btn.classList.add('active'); autoInterval = setInterval(() => play(10), 8000); } else { btn.innerText = "AUTO MODE: OFF"; btn.classList.remove('active'); clearInterval(autoInterval); } }
+        function animateHit(idx, payout, mult) {
+            const box = document.querySelector(`.mult-box[data-slot="${idx}"]`);
+            if (box) { box.classList.add('hit'); const popup = box.querySelector('.win-popup'); if (popup) { popup.innerText = "+" + payout.toFixed(3); popup.style.display = 'block'; setTimeout(() => popup.style.display = 'none', 1000); } if (mult >= 1.5) winSound.cloneNode(true).play(); setTimeout(() => box.classList.remove('hit'), 800); }
+            sessionWin += payout; document.getElementById('totalWin').innerText = sessionWin.toFixed(3);
+            const px = sessionWin / sessionBet; document.getElementById('profitX').innerText = px.toFixed(2) + "x"; document.getElementById('profitX').style.color = px >= 1 ? '#10b981' : '#f43f5e';
+            
+            // GLOBAL STATS UPDATE (localStorage for transactions tab)
+            let gHistory = JSON.parse(localStorage.getItem('history') || "[]");
+            gHistory.unshift({ time: new Date().toLocaleTimeString(), bet: (payout/mult).toFixed(3), mult: mult, payout: payout.toFixed(3) });
+            localStorage.setItem('history', JSON.stringify(gHistory.slice(0, 50)));
+
+            // SEND TO BACKEND API (database + XP)
+            const addr = walletAddress || localStorage.getItem('walletAddress');
+            if (addr) {
+                fetch('http://localhost:3001/api/eth-price').then(r=>r.json()).then(priceData => {
+                    fetch('http://localhost:3001/api/user/game-result', {
+                        method: 'POST', headers: {'Content-Type':'application/json'},
+                        body: JSON.stringify({ address: addr, gameName: 'ARCLINKO', betETH: payout/mult, payoutETH: payout, multiplier: mult, ethPriceUSD: priceData.usd || 3500 })
+                    }).catch(e => console.log('API save failed:', e));
+                }).catch(() => {
+                    fetch('http://localhost:3001/api/user/game-result', {
+                        method: 'POST', headers: {'Content-Type':'application/json'},
+                        body: JSON.stringify({ address: addr, gameName: 'ARCLINKO', betETH: payout/mult, payoutETH: payout, multiplier: mult, ethPriceUSD: 3500 })
+                    }).catch(e => console.log('API save failed:', e));
+                });
+            }
+
+            addToHistory(payout, mult);
+        }
+        function addToHistory(payout, mult) { const tbody = document.getElementById('historyBody'); const row = tbody.insertRow(0); row.innerHTML = `<td>${new Date().toLocaleTimeString()}</td><td>${document.getElementById('amount').value} ETH</td><td class="${mult >= 1 ? 'win-text' : 'loss-text'}">${mult}x</td><td class="${mult >= 1 ? 'win-text' : 'loss-text'}">${payout.toFixed(3)} ETH</td>`; if (tbody.rows.length > 15) tbody.deleteRow(15); }
+        async function adminWithdraw() { try { await contract.withdraw(); alert("Withdraw Success!"); } catch(e) { alert("Error!"); } }
+        async function adminDeposit() { const amt = prompt("Amount (ETH):", "1.0"); if (amt) { await contract.deposit({ value: ethers.parseEther(amt) }); alert("Deposit Success!"); } }
+        function setDifficulty(d) { currentDifficulty = d; document.querySelectorAll('.diff-btn').forEach((btn, i) => btn.classList.toggle('active', i === d)); updateMultiplierUI(); }
+        function updateMultiplierUI() { const row = document.getElementById('multiplier-row'); row.innerHTML = ''; diffData[currentDifficulty].mults.forEach((m, i) => { const box = document.createElement('div'); box.className = `mult-box`; box.style.color = diffData[currentDifficulty].colors[i]; box.setAttribute('data-slot', i); box.innerHTML = `<span class="win-popup"></span>${m}`; row.appendChild(box); }); }
+        engine.gravity.y = 1.2; // Biraz daha hizli dusus
+        Render.run(render); 
+        const runner = Runner.create();
+        Runner.run(runner, engine); 
+        updateMultiplierUI();
+    </script>
+</body>
+</html>
