@@ -1,3 +1,5 @@
+"use client";
+
 import { PlinkoGame } from "@/components/game/PlinkoGame";
 import { GameCard } from "@/components/ui/GameCard";
 import { Trophy, Wallet, Activity, ShieldCheck } from "lucide-react";
